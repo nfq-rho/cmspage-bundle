@@ -1,0 +1,2 @@
+nfq_cmspage:
+    resource: "@NfqCmsPageBundle/Resources/config/routing.yml"

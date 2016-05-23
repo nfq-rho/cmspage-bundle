@@ -1,0 +1,26 @@
+#Admin
+#These routes are prefix with /admin/cms-pages in routing.yml
+nfq_cmspage_list:
+    path: /
+    methods: [ GET ]
+    defaults: { _controller: NfqCmsPageBundle:Admin/CmsPage:index }
+
+nfq_cmspage_new:
+    path: /new
+    methods: [ GET ]
+    defaults: { _controller: NfqCmsPageBundle:Admin/CmsPage:new }
+
+nfq_cmspage_create:
+    path: /new
+    methods: [ POST ]
+    defaults: { _controller: NfqCmsPageBundle:Admin/CmsPage:create }
+
+nfq_cmspage_update:
+    path: /{id}/update
+    methods: [ GET, POST ]
+    defaults: { _controller: NfqCmsPageBundle:Admin/CmsPage:update }
+
+nfq_cmspage_delete:
+    path: /{id}/delete
+    methods: [ GET, POST ]
+    defaults: { _controller: NfqCmsPageBundle:Admin/CmsPage:delete }

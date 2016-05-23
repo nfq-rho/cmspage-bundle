@@ -1,0 +1,86 @@
+parameters:
+    nfq_cmspage.admin.default_search_fields: [ 'id', 'name', 'metaTitle', 'text', 'identifier' ]
+
+    nfq_cmspage.entity_class: Nfq\CmsPageBundle\Entity\CmsPage
+    nfq_cmspage.repository_service_class: Nfq\CmsPageBundle\Entity\CmsPageRepository
+    
+    nfq_cmspage.cms_manager.class: Nfq\CmsPageBundle\Service\CmsManager
+
+services:
+    #Generic services
+    nfq_cmspage.generic_search:
+        class: Nfq\CmsPageBundle\Service\Admin\Search\CmsSearch
+        arguments: [ '%nfq_cmspage.admin.default_search_fields%' ]
+        tags:
+            - { name: nfq_admin.search, manager: nfq_cmspage.admin.service.cms_manager }
+
+    nfq_cmspage.admin.service.cms_manager:
+        class: Nfq\CmsPageBundle\Service\Admin\CmsManager
+        arguments: [ '@nfq_cmspage.repository_service' ]
+        tags:
+            - { name: nfq_admin.manager }
+
+    nfq_cmspage.admin.service.cms_upload_manager:
+        class: Nfq\CmsPageBundle\Service\Admin\CmsUploadManager
+        arguments: [ '%nfq_cmspage.config%' ]
+
+    nfq_cmspage.cms_type_manager:
+        class: Nfq\CmsPageBundle\Service\CmsTypeManager
+        calls:
+            - [setContainer, [ '@service_container' ]]
+            - [setConfig, [ '%nfq_cmspage.types%' ]]
+
+    nfq_cmspage.cms_manager:
+        class: '%nfq_cmspage.cms_manager.class%'
+        arguments: [ '@nfq_cmspage.repository_service', '%locale%' ]
+        calls:
+            - [setAuthChecker, [ '@security.authorization_checker' ]]
+
+    nfq_cmspage.service.place_manager:
+        class: Nfq\CmsPageBundle\Service\CmsPlaceManager
+        arguments: [ '@doctrine.orm.entity_manager', '@translator' ]
+        calls:
+            - [setPlaces, [ '%nfq_cmspage.places%' ]]
+
+    #Twig extensions
+    nfq_cmspage.twig.cmspage_extension:
+        class: Nfq\CmsPageBundle\Twig\CmsPageExtension
+        arguments:
+            - '@nfq_cmspage.cms_manager'
+            - '@nfq_cmspage.admin.service.cms_upload_manager'
+            - '@nfq_cmspage.service.place_manager'
+            - '@router'
+        tags:
+            - { name: twig.extension }
+
+    #Listeners
+    nfq_cmspage.notice_listener:
+        class: Nfq\AdminBundle\EventListener\NoticeListener
+        arguments: [ '@nfq_admin.notice_service' ]
+        tags:
+            - { name: kernel.event_listener, event: cmspage.after_save, method: onMessage, priority: -10 }
+            - { name: kernel.event_listener, event: cmspage.after_insert, method: onMessage, priority: -10 }
+            - { name: kernel.event_listener, event: cmspage.after_delete, method: onMessage, priority: -10 }
+
+    nfq_cmspage.entity_listener.file_upload:
+        class: Nfq\CmsPageBundle\EventListener\Doctrine\FileUploadListener
+        arguments: [ '@nfq_cmspage.admin.service.cms_upload_manager' ]
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: preFlush }
+            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: postRemove }
+
+    #Admin menu listener
+    nfq_cmspage.admin_configure_menu_listener:
+        parent: nfq_admin.menu.base_listener
+        class: Nfq\CmsPageBundle\EventListener\AdminMenuListener
+        tags:
+          - { name: kernel.event_listener, event: nfq_admin.side_menu_configure, method: onMenuConfigure }
+
+    #Repositories
+    nfq_cmspage.repository_service:
+        class: '%nfq_cmspage.repository_service_class%'
+        factory: [ '@doctrine.orm.entity_manager', getRepository ]
+        arguments: [ '%nfq_cmspage.entity_class%' ]

@@ -1,0 +1,29 @@
+imports:
+    - { resource: config.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+    secret: %secret%
+
+monolog:
+    channels: [ "fatal", "doctrine" ]
+    handlers:
+        main:
+            type:   stream
+            path:   "%kernel.logs_dir%/%kernel.environment%.log"
+            level:  debug
+            channels: [ "!doctrine", "!fatal" ]
+        fatal:
+            type:   stream
+            path:   "%kernel.logs_dir%/%kernel.environment%.fatal.log"
+            level:  critical
+            channels: [ "fatal", "app" ]
+        doctrine:
+            type:   stream
+            path:   "%kernel.logs_dir%/%kernel.environment%.doctrine.log"
+            level:  debug
+            channels: [ "doctrine" ]

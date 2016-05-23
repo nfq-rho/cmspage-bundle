@@ -1,0 +1,21 @@
+parameters:
+    database_driver:    pdo_mysql
+    database_host:      localhost
+    database_port:      ~
+    database_name:      testdb
+    database_user:      root
+    database_password:  ~
+
+    mailer_transport:   smtp
+    mailer_host:        '127.0.0.1:1025'
+    mailer_user:        ~
+    mailer_password:    ~
+    site_mail_address:  alpha@nfq.lt
+    secret:             ThisTokenIsNotSoSecretChangeIt
+
+    global_max_per_page: 20
+
+    locale:             en_LT
+    locales:
+        - lt_LT
+        - en_LT

@@ -1,0 +1,61 @@
+{{ form_row(form.isActive) }}
+
+{% if form.identifier is defined %}
+    {{ form_row(form.identifier) }}
+{% endif %}
+
+{% if form.name is defined %}
+    {{ form_row(form.name) }}
+{% endif %}
+
+{% if form.slug is defined %}
+    {{ form_row(form.slug) }}
+{% endif %}
+
+{% if form.metaTitle is defined %}
+    <div class="form-group">
+        {{ form_label(form.metaTitle) }}
+        <div class="row col-sm-10">
+            <div class="col-sm-10">
+                {{ form_widget(form.metaTitle, {
+                    'attr': {
+                        'class': 'countable',
+                        'maxlength': '55',
+                        'data-counter-container': '#title-counter-' ~ locale
+                    }
+                }) }}
+            </div>
+            <div class="col-sm-2">
+                <span class="badge"><span id="title-counter-{{ locale }}"></span> / 55</span>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if form.metaDescription is defined %}
+    <div class="form-group">
+        {{ form_label(form.metaDescription) }}
+        <div class="row col-sm-10">
+            <div class="col-sm-10">
+                {{ form_widget(form.metaDescription, {
+                    'attr': {
+                        'class': 'countable',
+                        'maxlength': '150',
+                        'data-counter-container': '#description-counter-' ~ locale
+                    }
+                }) }}
+            </div>
+            <div class="col-sm-2">
+                <span class="badge"><span id="description-counter-{{ locale }}"></span> / 150</span>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if form.text_simple is defined %}
+    {{ form_row(form.text_simple) }}
+{% endif %}
+
+{% if form.extra is defined and form.extra.children|length > 0 %}
+    {{ form_widget(form.extra) }}
+{% endif %}
