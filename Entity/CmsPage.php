@@ -66,7 +66,7 @@ class CmsPage
      * @var string
      *
      * @Gedmo\Translatable
-     * @ORM\Column(name="meta_description", type="string", length=150, nullable=true)
+     * @ORM\Column(name="meta_description", type="string", length=155, nullable=true)
      */
     protected $metaDescription;
 
