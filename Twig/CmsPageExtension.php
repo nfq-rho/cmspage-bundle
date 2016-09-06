@@ -232,8 +232,8 @@ class CmsPageExtension extends \Twig_Extension
     public function getPageUrlsRaw(\Twig_Environment $environment)
     {
         $routes = [];
-        //Get entity by locale and slug
-        $cmsPage = $this->manager->getCmsPageBySlug($this->getSlug($environment), $this->getLocale($environment));
+        //Get entity by locale and slug/identifier
+        $cmsPage = $this->manager->getCmsPage($this->getSlug($environment), $this->getLocale($environment));
 
         foreach ($this->manager->getCmsPageTranslations($cmsPage) as $locale => $translation) {
             $urlParams['_locale'] = $locale;
