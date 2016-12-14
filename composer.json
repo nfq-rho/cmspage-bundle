@@ -10,8 +10,8 @@
         }
     ],
     "require": {
-        "php": ">=5.4",
-        "symfony/symfony": "~2.6",
+        "php": ">=7.0",
+        "symfony/symfony": "~3",
         "symfony/monolog-bundle": "~2.4",
         "doctrine/orm": "~2.5",
         "doctrine/doctrine-bundle": "~1.5",
@@ -20,7 +20,7 @@
         "gedmo/doctrine-extensions": "dev-master",
         "stfalcon/tinymce-bundle": "~1.1|~2.1",
 
-        "nfq-rho/admin-bundle": "~0.5"
+        "nfq-rho/admin-bundle": "dev-sf3_update"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.7"
