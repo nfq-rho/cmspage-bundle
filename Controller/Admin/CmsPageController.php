@@ -174,7 +174,7 @@ class CmsPageController extends Controller
      */
     protected function getCreateFormAndEntity($locale)
     {
-        $formType = $this->adapter->getFormTypeInstance();
+        $formType = get_class($this->adapter->getFormTypeInstance());
         $entity = $this->adapter->getEntityInstance();
         $entity->setLocale($locale);
 
