@@ -37,7 +37,6 @@
                     <th>
                         {{ nfqSorting.sortUrl('nfq_cmspage_list', 'search.contentType', 'cmspage.labels.contentType') }}
                     </th>
-                    <th></th>
                     <th>
                         {{ nfqSorting.sortUrl('nfq_cmspage_list', 'search.identifier', 'cmspage.cmspage_identifier') }}
                     </th>
@@ -94,7 +93,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7" class="text-center">{{ 'cmspage.cmspage_nopages'|trans }}</td>
+                    <td colspan="8" class="text-center">{{ 'cmspage.cmspage_nopages'|trans }}</td>
                 </tr>
             {% endfor %}
             </tbody>
