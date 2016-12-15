@@ -203,7 +203,7 @@ class CmsPageController extends Controller
      */
     protected function getEditDeleteForms($entity)
     {
-        $formType = $this->adapter->getFormTypeInstance();
+        $formType = get_class($this->adapter->getFormTypeInstance());
 
         $id = $entity->getId();
 
