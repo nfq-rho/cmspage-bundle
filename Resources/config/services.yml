@@ -30,11 +30,6 @@ services:
             - [setContainer, [ '@service_container' ]]
             - [setConfig, [ '%nfq_cmspage.types%' ]]
 
-    nfq_cmspage.cms_page_type:
-        class: Nfq\CmsPageBundle\Form\CmsPageType
-        tags:
-            - { name: form.type }
-
     nfq_cmspage.cms_manager:
         class: '%nfq_cmspage.cms_manager.class%'
         arguments: [ '@nfq_cmspage.repository_service', '%locale%' ]
