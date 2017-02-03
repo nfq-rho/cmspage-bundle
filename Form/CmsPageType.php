@@ -13,7 +13,12 @@ namespace Nfq\CmsPageBundle\Form;
 
 use Nfq\AdminBundle\Form\TranslatableType;
 use Nfq\AdminBundle\PlaceManager\Form\PlaceType;
+use Nfq\CmsPageBundle\Entity\CmsPage;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -29,41 +34,41 @@ class CmsPageType extends TranslatableType
     public function callBuildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('isActive', 'checkbox', [
+            ->add('isActive', CheckboxType::class, [
                 'required' => false
             ])
             ->add('identifier')
             ->add('name')
-            ->add('metaTitle', 'text', [
+            ->add('metaTitle', TextType::class, [
                 'required' => false,
             ])
-            ->add('metaDescription', 'textarea', [
+            ->add('metaDescription', TextareaType::class, [
                 'required' => false,
             ])
-            ->add('slug', 'text', [
+            ->add('slug', TextType::class, [
                 'required' => false,
             ])
             ->add('file')
-            ->add('imageAlt', 'text', [
+            ->add('imageAlt', TextType::class, [
                 'required' => false
             ])
-            ->add('extra', new CmsPageExtraType(), [
+            ->add('extra', CmsPageExtraType::class, [
                 'mapped' => false,
                 'label' => false,
                 'allow_extra_fields' => true,
             ])
-            ->add('text_mce', 'textarea', [
+            ->add('text_mce', TextareaType::class, [
                 'label' => false,
                 'property_path' => 'text',
                 'attr' => ['class' => 'tinymce']
             ])
-            ->add('text_simple', 'textarea', [
+            ->add('text_simple', TextareaType::class, [
                 'label' => false, 'property_path' => 'text'
             ]);
 
             if (!empty($options['places'])) {
-                $builder->add('places_config', new PlaceType(), [
-                    'virtual' => true,
+                $builder->add('places_config', PlaceType::class, [
+                    'inherit_data' => true,
                     'places' => $options['places'],
                     'label' => false
                 ]);
@@ -71,15 +76,32 @@ class CmsPageType extends TranslatableType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    public function callSetDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $resolver
             ->setRequired(['places'])
-            ->setAllowedTypes(['places' => 'array'])
+            ->setAllowedTypes('places', 'array')
             ->setDefaults([
-                'data_class' => 'Nfq\\CmsPageBundle\\Entity\\CmsPage'
+                'data_class' => CmsPage::class,
+            ]);
+    }
+
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        parent::setDefaultOptions($resolver);
+
+        $resolver
+            ->setRequired(['places'])
+            ->setAllowedTypes('places', 'array')
+            ->setDefaults([
+                'data_class' => CmsPage::class,
             ]);
     }
 
