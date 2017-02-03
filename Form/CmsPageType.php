@@ -13,11 +13,13 @@ namespace Nfq\CmsPageBundle\Form;
 
 use Nfq\AdminBundle\Form\TranslatableType;
 use Nfq\AdminBundle\PlaceManager\Form\PlaceType;
+use Nfq\CmsPageBundle\Entity\CmsPage;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class CmsPageType
@@ -76,13 +78,30 @@ class CmsPageType extends TranslatableType
     /**
      * @param OptionsResolver $resolver
      */
-    public function callSetDefaultOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $resolver
             ->setRequired(['places'])
             ->setAllowedTypes('places', 'array')
             ->setDefaults([
-                'data_class' => 'Nfq\\CmsPageBundle\\Entity\\CmsPage'
+                'data_class' => CmsPage::class,
+            ]);
+    }
+
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        parent::setDefaultOptions($resolver);
+
+        $resolver
+            ->setRequired(['places'])
+            ->setAllowedTypes('places', 'array')
+            ->setDefaults([
+                'data_class' => CmsPage::class,
             ]);
     }
 
