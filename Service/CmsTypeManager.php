@@ -12,7 +12,7 @@
 namespace Nfq\CmsPageBundle\Service;
 
 use Nfq\CmsPageBundle\Service\Adapters\CmsPageAdapterInterface;
-use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,8 +20,10 @@ use Symfony\Component\HttpFoundation\Request;
  * Class CmsTypeManager
  * @package Nfq\CmsPageBundle\Service
  */
-class CmsTypeManager extends ContainerAware
+class CmsTypeManager
 {
+    use ContainerAwareTrait;
+
     /**
      * @var string
      */
