@@ -163,6 +163,12 @@ class CmsPage
     private $locale;
 
     /**
+     * @var integer
+     * @ORM\Column(name="priority", type="integer", nullable=true)
+     */
+    private $priority = 0;
+
+    /**
      * Get id
      *
      * @return integer
@@ -496,5 +502,21 @@ class CmsPage
         $this->imageAlt = $imageAlt;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * @param int $priority
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
     }
 }
