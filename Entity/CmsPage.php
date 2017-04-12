@@ -164,7 +164,7 @@ class CmsPage
 
     /**
      * @var integer
-     * @ORM\Column(name="priority", type="integer", nullable=true)
+     * @ORM\Column(name="priority", type="integer")
      */
     private $priority = 0;
 
