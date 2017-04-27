@@ -97,19 +97,6 @@ class CmsPageType extends TranslatableType
     /**
      * @param OptionsResolverInterface $resolver
      */
-    public function callSetDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver
-            ->setRequired(['places'])
-            ->setAllowedTypes('places', 'array')
-            ->setDefaults([
-                'data_class' => CmsPage::class,
-            ]);
-    }
-
-    /**
-     * @param OptionsResolverInterface $resolver
-     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
