@@ -164,9 +164,9 @@ class CmsPage
 
     /**
      * @var integer
-     * @ORM\Column(name="priority", type="integer")
+     * @ORM\Column(name="sort_position", type="integer")
      */
-    private $priority = 0;
+    private $sortPosition = 0;
 
     /**
      * Get id
@@ -507,16 +507,19 @@ class CmsPage
     /**
      * @return int
      */
-    public function getPriority()
+    public function getSortPosition()
     {
-        return $this->priority;
+        return $this->sortPosition;
     }
 
     /**
-     * @param int $priority
+     * @param int $sortPosition
+     * @return CmsPage
      */
-    public function setPriority($priority)
+    public function setSortPosition($sortPosition)
     {
-        $this->priority = $priority;
+        $this->sortPosition = $sortPosition;
+
+        return $this;
     }
 }

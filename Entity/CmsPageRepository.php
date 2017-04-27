@@ -91,6 +91,30 @@ class CmsPageRepository extends EntityRepository implements PlaceAwareRepository
     }
 
     /**
+     * @param array $criteria
+     * @param string $locale
+     * @param bool $fallback
+     * @param string $sortOrder
+     * @return Query
+     */
+    public function getTranslatableQueryByCriteriaSorted(
+        array $criteria,
+        $locale,
+        $fallback = true,
+        $sortOrder = 'ASC'
+    ) {
+        $qb = $this->getQueryBuilder();
+        $this->addArrayCriteria($qb, $criteria);
+        $qb->orderBy('cms.sortPosition', $sortOrder);
+
+        $query = $qb->getQuery();
+
+        $this->setTranslatableHints($query, $locale, $fallback);
+
+        return $query;
+    }
+
+    /**
      * @return string
      */
     public function getAlias()

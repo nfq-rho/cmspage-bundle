@@ -82,6 +82,33 @@ class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
     }
 
     /**
+     * Get cms pages in given place sorted by sort position.
+     *
+     * @param string $placeId
+     * @param string $locale
+     * @param string $sortOrder
+     * @return array
+     */
+    public function getItemsInPlaceSorted($placeId, $locale, $sortOrder)
+    {
+        $criteria = [
+            'places' => '%' . $placeId . '%',
+            'isActive' => true,
+        ];
+
+        /** @var CmsPageRepository $repo */
+        $repo = $this->getPlaceAwareRepository();
+        $query = $repo->getTranslatableQueryByCriteriaSorted($criteria, $locale, $sortOrder);
+
+        $query
+            ->expireQueryCache(true)
+            ->expireResultCache(true)
+            ->setMaxResults($this->getPlaceLimit($placeId));
+
+        return $query->getResult();
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getPlaceAwareRepository()
