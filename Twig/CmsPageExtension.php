@@ -118,7 +118,7 @@ class CmsPageExtension extends \Twig_Extension
                     'is_safe' => ['html'],
                 ]
             ),
-            new \Twig_SimpleFunction('cms_urls_in_place_sorted', [$this, 'getPageUrlsInPlace'],
+            new \Twig_SimpleFunction('cms_urls_in_place_sorted', [$this, 'getPageUrlsInPlaceSorted'],
                 [
                     'needs_environment' => true,
                 ]
@@ -201,6 +201,7 @@ class CmsPageExtension extends \Twig_Extension
      * @param \Twig_Environment $environment
      * @param string $placeId
      * @param bool|false $raw
+     * @param string $sortOrder
      * @return array
      */
     public function getPageUrlsInPlaceSorted(\Twig_Environment $environment, $placeId, $raw = false, $sortOrder = 'ASC')
