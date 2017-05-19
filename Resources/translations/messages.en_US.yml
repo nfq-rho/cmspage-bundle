@@ -14,6 +14,7 @@ cmspage.cmspage_identifier: Identifier
 cmspage.cmspage_slug: Slug
 cmspage.cmspage_simple_text: Body text
 cmspage.cmspage_back: Back to list
+cmspage.cmspage_sort_position: Sort Position
 
 cmspage.head_total: Total CMS pages found
 

@@ -15,6 +15,7 @@ use Nfq\AdminBundle\Form\TranslatableType;
 use Nfq\AdminBundle\PlaceManager\Form\PlaceType;
 use Nfq\CmsPageBundle\Entity\CmsPage;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -64,6 +65,9 @@ class CmsPageType extends TranslatableType
             ])
             ->add('text_simple', TextareaType::class, [
                 'label' => false, 'property_path' => 'text'
+            ])
+            ->add('sortPosition', IntegerType::class, [
+                'required' => false
             ]);
 
             if (!empty($options['places'])) {

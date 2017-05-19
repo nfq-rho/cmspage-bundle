@@ -13,6 +13,7 @@ cmspage.cmspage_name: Pavadinimas
 cmspage.cmspage_identifier: Identifikatorius
 cmspage.cmspage_slug: Slug
 cmspage.cmspage_back: Atgal į sąrašą
+cmspage.cmspage_sort_position: Rikiavimo vieta
 
 cmspage.head_total: Viso rasta CMS puslapių
 

@@ -163,6 +163,12 @@ class CmsPage
     private $locale;
 
     /**
+     * @var integer
+     * @ORM\Column(name="sort_position", type="integer")
+     */
+    private $sortPosition = 0;
+
+    /**
      * Get id
      *
      * @return integer
@@ -494,6 +500,25 @@ class CmsPage
     public function setImageAlt($imageAlt)
     {
         $this->imageAlt = $imageAlt;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSortPosition()
+    {
+        return $this->sortPosition;
+    }
+
+    /**
+     * @param int $sortPosition
+     * @return CmsPage
+     */
+    public function setSortPosition($sortPosition)
+    {
+        $this->sortPosition = $sortPosition;
 
         return $this;
     }
