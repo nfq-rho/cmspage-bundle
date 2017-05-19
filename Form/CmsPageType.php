@@ -100,7 +100,6 @@ class CmsPageType extends TranslatableType
      */
     public function callSetDefaultOptions(OptionsResolverInterface $resolver)
     {
-        self::setDefaultOptions($resolver);
     }
 
     /**
