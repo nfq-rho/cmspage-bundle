@@ -69,6 +69,7 @@ class CmsPageType extends TranslatableType
             ])
             ->add('sortPosition', IntegerType::class, [
                 'required' => false,
+                'empty_data' => 0,
             ]);
 
         if (!empty($options['places'])) {
