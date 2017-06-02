@@ -58,9 +58,10 @@ class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
      *
      * @param string $placeId
      * @param string $locale
+     * @param string $sortOrder
      * @return array
      */
-    public function getItemsInPlace($placeId, $locale)
+    public function getItemsInPlace($placeId, $locale, $sortOrder = 'ASC')
     {
         $criteria = [
             'places' => '%' . $placeId . '%',
@@ -72,33 +73,6 @@ class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
         /** @var CmsPageRepository $repo */
         $repo = $this->getPlaceAwareRepository();
         $query = $repo->getTranslatableQueryByCriteria($criteria, $locale);
-
-        $query
-            ->expireQueryCache(true)
-            ->expireResultCache(true)
-            ->setMaxResults($this->getPlaceLimit($placeId));
-
-        return $query->getResult();
-    }
-
-    /**
-     * Get cms pages in given place sorted by sort position.
-     *
-     * @param string $placeId
-     * @param string $locale
-     * @param string $sortOrder
-     * @return array
-     */
-    public function getItemsInPlaceSorted($placeId, $locale, $sortOrder)
-    {
-        $criteria = [
-            'places' => '%' . $placeId . '%',
-            'isActive' => true,
-        ];
-
-        /** @var CmsPageRepository $repo */
-        $repo = $this->getPlaceAwareRepository();
-        $query = $repo->getTranslatableQueryByCriteriaSorted($criteria, $locale, $sortOrder);
 
         $query
             ->expireQueryCache(true)

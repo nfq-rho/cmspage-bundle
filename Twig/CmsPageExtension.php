@@ -15,6 +15,7 @@ use Nfq\AdminBundle\PlaceManager\PlaceManagerInterface;
 use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\CmsPageBundle\Service\Admin\CmsUploadManager;
 use Nfq\CmsPageBundle\Service\CmsManager;
+use Nfq\CmsPageBundle\Service\CmsPlaceManager;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -52,7 +53,7 @@ class CmsPageExtension extends \Twig_Extension
     private $uploadManager;
 
     /**
-     * @var PlaceManagerInterface
+     * @var CmsPlaceManager
      */
     private $placeManager;
 
@@ -118,11 +119,6 @@ class CmsPageExtension extends \Twig_Extension
                     'is_safe' => ['html'],
                 ]
             ),
-            new \Twig_SimpleFunction('cms_urls_in_place_sorted', [$this, 'getPageUrlsInPlaceSorted'],
-                [
-                    'needs_environment' => true,
-                ]
-            ),
         ];
     }
 
@@ -174,42 +170,15 @@ class CmsPageExtension extends \Twig_Extension
      * @param \Twig_Environment $environment
      * @param string $placeId
      * @param bool|false $raw
-     * @return array
-     */
-    public function getPageUrlsInPlace(\Twig_Environment $environment, $placeId, $raw = false)
-    {
-        $locale = $this->getLocale($environment);
-
-        try {
-            $cmsPages = $this->placeManager->getItemsInPlace($placeId, $locale);
-
-            $result = [];
-            foreach ($cmsPages as $groupPage) {
-                $urlParams = $this->manager->getCmsUrlParams($groupPage, $locale, $raw);
-
-                $result[] = $this->getUrl($urlParams, '', $raw);
-            }
-        } catch (\Exception $ex) {
-            //Cms page was not found so just return empty string
-            $result = [];
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param \Twig_Environment $environment
-     * @param string $placeId
-     * @param bool|false $raw
      * @param string $sortOrder
      * @return array
      */
-    public function getPageUrlsInPlaceSorted(\Twig_Environment $environment, $placeId, $raw = false, $sortOrder = 'ASC')
+    public function getPageUrlsInPlace(\Twig_Environment $environment, $placeId, $raw = false, $sortOrder = 'ASC')
     {
         $locale = $this->getLocale($environment);
 
         try {
-            $cmsPages = $this->placeManager->getItemsInPlaceSorted($placeId, $locale, $sortOrder);
+            $cmsPages = $this->placeManager->getItemsInPlace($placeId, $locale, $sortOrder);
 
             $result = [];
             foreach ($cmsPages as $groupPage) {
@@ -224,7 +193,6 @@ class CmsPageExtension extends \Twig_Extension
 
         return $result;
     }
-
 
     /**
      * @param \Twig_Environment $environment
