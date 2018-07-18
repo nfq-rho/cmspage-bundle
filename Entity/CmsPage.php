@@ -163,7 +163,7 @@ class CmsPage
     private $locale;
 
     /**
-     * Added in case Country used multiple locales and has different content by locale
+     * Added in case Country uses multiple locales and has different content by locale
      * 
      * @var string|null
      *
