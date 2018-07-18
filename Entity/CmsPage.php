@@ -163,6 +163,15 @@ class CmsPage
     private $locale;
 
     /**
+     * Added in case Country used multiple locales and has different content by locale
+     * 
+     * @var string|null
+     *
+     * @ORM\Column(name="country_code", type="string", length=2, nullable=true)
+     */
+    protected $countryCode;
+
+    /**
      * Get id
      *
      * @return integer
@@ -494,6 +503,26 @@ class CmsPage
     public function setImageAlt($imageAlt)
     {
         $this->imageAlt = $imageAlt;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCountryCode()
+    {
+        return $this->countryCode;
+    }
+
+    /**
+     * @param string $countryCode
+     *
+     * @return CmsPage
+     */
+    public function setCountryCode($countryCode)
+    {
+        $this->countryCode = $countryCode;
 
         return $this;
     }
