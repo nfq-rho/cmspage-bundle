@@ -35,7 +35,7 @@ class CmsPageType extends TranslatableType
     {
         $builder
             ->add('isActive', CheckboxType::class, [
-                'required' => false
+                'required' => false,
             ])
             ->add('identifier')
             ->add('name')
@@ -50,7 +50,7 @@ class CmsPageType extends TranslatableType
             ])
             ->add('file')
             ->add('imageAlt', TextType::class, [
-                'required' => false
+                'required' => false,
             ])
             ->add('extra', CmsPageExtraType::class, [
                 'mapped' => false,
@@ -60,19 +60,25 @@ class CmsPageType extends TranslatableType
             ->add('text_mce', TextareaType::class, [
                 'label' => false,
                 'property_path' => 'text',
-                'attr' => ['class' => 'tinymce']
+                'attr' => ['class' => 'tinymce'],
             ])
             ->add('text_simple', TextareaType::class, [
-                'label' => false, 'property_path' => 'text'
-            ]);
+                'label' => false,
+                'property_path' => 'text',
+            ])
+            ->add(
+                'countryCode',
+                TextType::class,
+                ['required' => false]
+            );
 
-            if (!empty($options['places'])) {
-                $builder->add('places_config', PlaceType::class, [
-                    'inherit_data' => true,
-                    'places' => $options['places'],
-                    'label' => false
-                ]);
-            }
+        if (!empty($options['places'])) {
+            $builder->add('places_config', PlaceType::class, [
+                'inherit_data' => true,
+                'places' => $options['places'],
+                'label' => false,
+            ]);
+        }
     }
 
     /**

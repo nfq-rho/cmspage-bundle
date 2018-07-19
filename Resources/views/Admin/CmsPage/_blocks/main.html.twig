@@ -12,6 +12,10 @@
     {{ form_row(form.slug) }}
 {% endif %}
 
+{% if form.countryCode is defined %}
+    {{ form_row(form.countryCode) }}
+{% endif %}
+
 {% if form.metaTitle is defined %}
     <div class="form-group">
         {{ form_label(form.metaTitle) }}
