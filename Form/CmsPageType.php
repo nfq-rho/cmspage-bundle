@@ -20,7 +20,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class CmsPageType
@@ -28,10 +27,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class CmsPageType extends TranslatableType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function callBuildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -79,28 +74,8 @@ class CmsPageType extends TranslatableType
             }
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function callSetDefaultOptions(OptionsResolver $resolver)
     {
-        parent::configureOptions($resolver);
-
-        $resolver
-            ->setRequired(['places'])
-            ->setAllowedTypes('places', 'array')
-            ->setDefaults([
-                'data_class' => CmsPage::class,
-            ]);
-    }
-
-    /**
-     * @param OptionsResolverInterface $resolver
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        parent::setDefaultOptions($resolver);
-
         $resolver
             ->setRequired(['places'])
             ->setAllowedTypes('places', 'array')

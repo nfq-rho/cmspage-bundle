@@ -41,10 +41,27 @@ class CmsPageController extends Controller
         indexAction as traitIndexAction;
     }
 
-    /**
-     * @var CmsPageAdapterInterface
-     */
+    /** @var CmsPageAdapterInterface */
     private $adapter;
+
+    /** @var CmsManager */
+    private $cmsManager;
+
+    /** @var CmsTypeManager */
+    private $cmsTypeManager;
+
+    /** @var PlaceManagerInterface */
+    private $placeManager;
+
+    public function __construct(
+        CmsManager $cmsManager,
+        CmsTypeManager $cmsTypeManager,
+        PlaceManagerInterface $placeManager
+    ) {
+        $this->cmsManager = $cmsManager;
+        $this->cmsTypeManager = $cmsTypeManager;
+        $this->placeManager = $placeManager;
+    }
 
     /**
      * Lists all entities.
@@ -58,16 +75,13 @@ class CmsPageController extends Controller
         $response = $this->traitIndexAction($request);
 
         return $response + [
-            'contentTypes' => $this->getTypeManager()->getTypes()
-        ];
+                'contentTypes' => $this->getTypeManager()->getTypes()
+            ];
     }
 
-    /**
-     * @return CmsTypeManager
-     */
-    private function getTypeManager()
+    private function getTypeManager(): CmsTypeManager
     {
-        return $this->get('nfq_cmspage.cms_type_manager');
+        return $this->cmsTypeManager;
     }
 
     /**
@@ -119,15 +133,7 @@ class CmsPageController extends Controller
      */
     protected function getEditableEntityForLocale($id, $locale)
     {
-        return $this->getAdminCmsManager()->getEditableEntity($id, $locale);
-    }
-
-    /**
-     * @return CmsManager
-     */
-    private function getAdminCmsManager()
-    {
-        return $this->get('nfq_cmspage.admin.service.cms_manager');
+        return $this->cmsManager->getEditableEntity($id, $locale);
     }
 
     /**
@@ -136,16 +142,16 @@ class CmsPageController extends Controller
      */
     protected function getIndexActionResultsArray(Request $request)
     {
-        return $this->getAdminCmsManager()->getResults($request);
+        return $this->cmsManager->getResults($request);
     }
 
     /**
      * @param CmsPage $entity
      * @return RedirectResponse
      */
-    protected function redirectToPreview($entity)
+    protected function redirectToPreview(CmsPage $entity)
     {
-        $params = $this->get('nfq_cmspage.cms_manager')
+        $params = $this->get(CmsManager::class)
             ->getCmsUrlParams($entity->getIdentifier(), $entity->getLocale());
 
         $params['_locale'] = $entity->getLocale();
@@ -160,7 +166,7 @@ class CmsPageController extends Controller
      * @param CmsPage|null $entity
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    protected function redirectToIndex(Request $request, $entity = null)
+    protected function redirectToIndex(Request $request, CmsPage $entity = null)
     {
         $redirectParams = $this->getRedirectToIndexParams($request, $entity);
 
@@ -182,7 +188,7 @@ class CmsPageController extends Controller
 
         $formOptions = [
             'locale' => $locale,
-            'places' => $this->getPlaceManager()->getPlaceChoices(),
+            'places' => $this->placeManager->getPlaceChoices(),
         ];
 
         $submit = ($entity->getIsPublic())
@@ -199,7 +205,8 @@ class CmsPageController extends Controller
     }
 
     /**
-     * {@inheritdoc}
+     * @param CmsPage $entity
+     * @return array
      */
     protected function getEditDeleteForms($entity)
     {
@@ -209,7 +216,7 @@ class CmsPageController extends Controller
 
         $formOptions = [
             'locale' => $entity->getLocale(),
-            'places' => $this->getPlaceManager()->getPlaceChoices(),
+            'places' => $this->placeManager->getPlaceChoices(),
         ];
 
         $uri = $this->generateUrl('nfq_cmspage_update', ['id' => $id, '_type' => $this->adapter->getType()]);
@@ -244,8 +251,7 @@ class CmsPageController extends Controller
      */
     protected function insertAfterCreateAction($entity)
     {
-        $manager = $this->getAdminCmsManager();
-        $manager->insert($entity);
+        $this->cmsManager->insert($entity);
     }
 
     /**
@@ -253,8 +259,7 @@ class CmsPageController extends Controller
      */
     protected function deleteAfterDeleteAction($entity)
     {
-        $manager = $this->getAdminCmsManager();
-        $manager->delete($entity);
+        $this->cmsManager->delete($entity);
     }
 
     /**
@@ -262,15 +267,6 @@ class CmsPageController extends Controller
      */
     protected function saveAfterUpdateAction($entity)
     {
-        $manager = $this->getAdminCmsManager();
-        $manager->save($entity);
-    }
-
-    /**
-     * @return PlaceManagerInterface
-     */
-    private function getPlaceManager()
-    {
-        return $this->get('nfq_cmspage.service.place_manager');
+        $this->cmsManager->save($entity);
     }
 }

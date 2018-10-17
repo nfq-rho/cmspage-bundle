@@ -30,13 +30,9 @@ class CmsUploadManager
      */
     private $config;
 
-    /**
-     * @param array $config
-     * @param string $defaultLocale
-     */
-    public function __construct(array $config)
+    public function __construct(array $bundleConfig)
     {
-        $this->resolveConfig($config);
+        $this->resolveConfig($bundleConfig);
     }
 
     /**

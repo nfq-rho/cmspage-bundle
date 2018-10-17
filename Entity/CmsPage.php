@@ -24,7 +24,7 @@ use Nfq\AdminBundle\PlaceManager\Validator\Constraints as NfqPlaceAssert;
  * @ORM\Table(name="cmspage", indexes={
  *      @ORM\Index(name="type_idx", columns={"content_type"})
  * })
- * @ORM\Entity(repositoryClass="Nfq\CmsPageBundle\Entity\CmsPageRepository")
+ * @ORM\Entity(repositoryClass="Nfq\CmsPageBundle\Repository\CmsPageRepository")
  * @UniqueEntity(fields={"slug"}, message="cmspage.errors.field_not_unique")
  * @UniqueEntity(fields={"identifier"}, message="cmspage.errors.field_not_unique")
  * @Gedmo\TranslationEntity(class="Nfq\CmsPageBundle\Entity\CmsPageTranslation")

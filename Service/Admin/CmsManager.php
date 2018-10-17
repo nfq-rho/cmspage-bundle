@@ -11,11 +11,10 @@
 
 namespace Nfq\CmsPageBundle\Service\Admin;
 
-use Doctrine\Common\Persistence\ObjectRepository;
 use Nfq\CmsPageBundle\CmsPageEvents;
 use Nfq\CmsPageBundle\Entity\CmsPage;
-use Nfq\CmsPageBundle\Entity\CmsPageRepository;
 use Nfq\AdminBundle\Service\Admin\AbstractAdminManager;
+use Nfq\CmsPageBundle\Repository\CmsPageRepository;
 
 /**
  * Class CmsManager
@@ -23,17 +22,9 @@ use Nfq\AdminBundle\Service\Admin\AbstractAdminManager;
  */
 class CmsManager extends AbstractAdminManager
 {
-    /**
-     * @var CmsPageRepository
-     */
-    private $repository;
-
-    /**
-     * @param CmsPageRepository|ObjectRepository $repository
-     */
-    public function __construct(ObjectRepository $repository)
+    public function __construct(CmsPageRepository $repository)
     {
-        $this->repository = $repository;
+        parent::__construct($repository);
     }
 
     /**
@@ -78,12 +69,7 @@ class CmsManager extends AbstractAdminManager
         return parent::save($entity, $beforeEventName, $afterEventName);
     }
 
-    /**
-     * @param int $id
-     * @param string $locale
-     * @return CmsPage
-     */
-    public function getEditableEntity($id, $locale)
+    public function getEditableEntity($id, ?string $locale): CmsPage
     {
         return $this->repository->getEditableEntity($id, $locale);
     }

@@ -9,19 +9,40 @@
  * file that was distributed with this source code.
  */
 
-namespace Nfq\CmsPageBundle\Entity;
+namespace Nfq\CmsPageBundle\Repository;
 
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\Query;
-use Nfq\AdminBundle\Doctrine\ORM\EntityRepository;
 use Nfq\AdminBundle\PlaceManager\Repository\PlaceAwareRepositoryInterface;
+use Nfq\AdminBundle\Repository\ServiceEntityRepository;
+use Nfq\CmsPageBundle\Entity\CmsPage;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Class CmsPageRepository
- * @package Nfq\CmsPageBundle\Entity
+ * @package Nfq\CmsPageBundle\Repository
  */
-class CmsPageRepository extends EntityRepository implements PlaceAwareRepositoryInterface
+class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRepositoryInterface
 {
+    protected $entityClass = CmsPage::class;
+
+    public function __construct(RegistryInterface $registry)
+    {
+        parent::__construct($registry, $this->entityClass);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUsedPlaceSlots(string $placeId): int
+    {
+        $qb = $this->getQueryBuilder()
+            ->select('COUNT(cms.id)');
+
+        $this->addArrayCriteria($qb, ['cms.places' => '%' . $placeId . '%']);
+
+        return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
     /**
      * @param string $idf
      * @param array $criteria
@@ -29,7 +50,7 @@ class CmsPageRepository extends EntityRepository implements PlaceAwareRepository
      * @return CmsPage
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getCmsPage($idf, array $criteria = [], $locale = null)
+    public function getCmsPage(string $idf, array $criteria = [], string $locale = null): ?CmsPage
     {
         $qb = $this->getQueryBuilder();
         $this->addArrayCriteria($qb, $criteria);
@@ -47,19 +68,6 @@ class CmsPageRepository extends EntityRepository implements PlaceAwareRepository
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getUsedPlaceSlots($placeId)
-    {
-        $qb = $this->getQueryBuilder()
-            ->select('COUNT(cms.id)');
-
-        $this->addArrayCriteria($qb, ['cms.places' => '%' . $placeId . '%']);
-
-        return (int)$qb->getQuery()->getSingleScalarResult();
-    }
-
-    /**
      * Get CMS page by id with translated content.
      *
      * @param int $id
@@ -67,7 +75,7 @@ class CmsPageRepository extends EntityRepository implements PlaceAwareRepository
      * @return null|CmsPage
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getEditableEntity($id, $locale)
+    public function getEditableEntity($id, ?string $locale): ?CmsPage
     {
         $query = $this->getTranslatableQueryByCriteria(['id' => $id], $locale, false);
 
@@ -82,7 +90,7 @@ class CmsPageRepository extends EntityRepository implements PlaceAwareRepository
      *
      * @return array
      */
-    public function getTranslations(CmsPage $cmsPage)
+    public function getTranslations(CmsPage $cmsPage): array
     {
         return $this
             ->getEntityManager()
@@ -90,18 +98,11 @@ class CmsPageRepository extends EntityRepository implements PlaceAwareRepository
             ->findTranslations($cmsPage);
     }
 
-    /**
-     * @param array $criteria
-     * @param string $locale
-     * @param bool $fallback
-     * @param string $sortOrder
-     * @return Query
-     */
     public function getTranslatableQueryByCriteriaSorted(
         array $criteria,
-        $locale,
-        $fallback = true,
-        $sortOrder = 'ASC'
+        ?string $locale,
+        bool $fallback = true,
+        string $sortOrder = 'ASC'
     ) {
         $qb = $this->getQueryBuilder();
         $this->addArrayCriteria($qb, $criteria);
@@ -114,10 +115,7 @@ class CmsPageRepository extends EntityRepository implements PlaceAwareRepository
         return $query;
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'cms';
     }

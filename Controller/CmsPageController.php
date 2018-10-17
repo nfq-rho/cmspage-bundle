@@ -12,6 +12,7 @@
 namespace Nfq\CmsPageBundle\Controller;
 
 use Nfq\CmsPageBundle\Entity\CmsPage;
+use Nfq\CmsPageBundle\Service\CmsManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,9 +26,19 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class CmsPageController extends Controller
 {
     /**
+     * @var CmsManager
+     */
+    private $cmsManager;
+
+    public function __construct(CmsManager $cmsManager)
+    {
+        $this->cmsManager = $cmsManager;
+    }
+
+    /**
      * @var string
      */
-    protected $defaultTemplate = 'NfqCmsPageBundle:CmsPage:view.html.twig';
+    protected $defaultTemplate = '@NfqCmsPage/CmsPage/view.html.twig';
 
     /**
      * @param Request $request
@@ -37,7 +48,7 @@ class CmsPageController extends Controller
     public function viewAction(Request $request, $slug)
     {
         try {
-            $entity = $this->getCmsPageManager()->getCmsPage($slug);
+            $entity = $this->cmsManager->getCmsPage($slug);
 
             $responseParams = [
                 'entity' => clone $entity,
@@ -76,14 +87,6 @@ class CmsPageController extends Controller
     }
 
     /**
-     * @return \Nfq\CmsPageBundle\Service\CmsManager
-     */
-    protected function getCmsPageManager()
-    {
-        return $this->get('nfq_cmspage.cms_manager');
-    }
-
-    /**
      * @param CmsPage $entity
      * @return string
      */
@@ -91,7 +94,7 @@ class CmsPageController extends Controller
     {
         $twigTemplateLoader = $this->get('twig.loader');
 
-        $customTemplate = sprintf('NfqCmsPageBundle:CmsPage/_custom:%s.html.twig', $entity->getIdentifier());
+        $customTemplate = sprintf('@NfqCmsPage/CmsPage/_custom:%s.html.twig', $entity->getIdentifier());
         $finalTemplate = $this->defaultTemplate;
 
         if ($twigTemplateLoader->exists($customTemplate)) {

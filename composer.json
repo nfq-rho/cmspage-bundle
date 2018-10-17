@@ -10,18 +10,15 @@
         }
     ],
     "require": {
-        "php": ">=5.6",
-        "symfony/symfony": "~2.7|~3.0|~3.3",
-        "symfony/monolog-bundle": "~2.4|~3.1",
-        "sensio/framework-extra-bundle": "~3.0",
+        "php": ">=7.1",
 
         "doctrine/orm": "~2.5",
         "doctrine/doctrine-bundle": "~1.5",
 
         "gedmo/doctrine-extensions": "2.4.*",
-        "stfalcon/tinymce-bundle": "~1.1|~2.1",
+        "stfalcon/tinymce-bundle": "^1.1|^2.1",
 
-        "nfq-rho/admin-bundle": "~0.6|~0.7"
+        "nfq-rho/admin-bundle": "@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.0"
@@ -30,7 +27,10 @@
         "nfq-rho/filemanager-bundle": "Adds file manager extension for tineMCE editor and allows to add media to CMS pages"
     },
     "autoload": {
-        "psr-4": { "Nfq\\CmsPageBundle\\": "" }
+        "psr-4": { "Nfq\\CmsPageBundle\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
     },
     "branch-alias" : {
         "dev-master" : "1.1-dev"

@@ -11,10 +11,8 @@
 
 namespace Nfq\CmsPageBundle\Service;
 
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\Query;
 use Nfq\CmsPageBundle\Entity\CmsPage;
-use Nfq\CmsPageBundle\Entity\CmsPageRepository;
+use Nfq\CmsPageBundle\Repository\CmsPageRepository;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
@@ -24,29 +22,19 @@ use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundE
  */
 class CmsManager
 {
-    /**
-     * @var ObjectRepository|CmsPageRepository
-     */
+    /**  @var CmsPageRepository */
     protected $repository;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $defaultLocale;
 
-    /**
-     * @var AuthorizationCheckerInterface
-     */
+    /** @var AuthorizationCheckerInterface */
     private $authChecker;
 
-    /**
-     * @param ObjectRepository $repository
-     * @param string $locale
-     */
-    public function __construct(ObjectRepository $repository, $locale)
+    public function __construct(CmsPageRepository $repository, string $defaultLocale)
     {
         $this->repository = $repository;
-        $this->defaultLocale = $locale;
+        $this->defaultLocale = $defaultLocale;
     }
 
     /**
@@ -276,9 +264,6 @@ class CmsManager
         return $translations;
     }
 
-    /**
-     * @param array $criteria
-     */
     private function hideFromPublic(array &$criteria)
     {
         try {
@@ -293,12 +278,6 @@ class CmsManager
         }
     }
 
-    /**
-     * @param CmsPage $cmsPage
-     * @param array $translations
-     *
-     * @return mixed
-     */
     private function addDefaultLocaleTranslation(CmsPage $cmsPage, &$translations)
     {
         //This is needed, because original entity data is not returned as translation

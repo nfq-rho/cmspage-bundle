@@ -1,0 +1,60 @@
+parameters:
+    nfq_cmspage.admin.default_search_fields: [ 'id', 'name', 'metaTitle', 'text', 'identifier' ]
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+        bind:
+            $defaultLocale: '%kernel.default_locale%'
+            $bundleConfig: '%nfq_cmspage.config%'
+
+    Nfq\CmsPageBundle\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Migrations,Tests,NfqCmsPageBundle.php}'
+
+    Nfq\CmsPageBundle\Controller\:
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']
+
+    Nfq\CmsPageBundle\Service\CmsPlaceManager:
+        calls:
+            - [setPlaces, ['%nfq_cmspage.places%']]
+
+    Nfq\AdminBundle\PlaceManager\PlaceManagerInterface: '@Nfq\CmsPageBundle\Service\CmsPlaceManager'
+
+    Nfq\CmsPageBundle\Service\CmsManager:
+        calls:
+            - [setAuthChecker, ['@security.authorization_checker']]
+
+    Nfq\CmsPageBundle\Service\Admin\CmsManager:
+        tags:
+            - { name: nfq_admin.manager }
+
+    Nfq\CmsPageBundle\Service\CmsTypeManager:
+        calls:
+            - [setConfig, ['%nfq_cmspage.types%']]
+            - [setContainer, ['@service_container']]
+
+    Nfq\CmsPageBundle\Service\Admin\Search\CmsSearch:
+        arguments: [ '%nfq_cmspage.admin.default_search_fields%' ]
+        tags:
+            - { name: nfq_admin.search, manager: Nfq\CmsPageBundle\Service\Admin\CmsManager }
+
+    Nfq\AdminBundle\EventListener\NoticeListener:
+        arguments: [ '@Nfq\AdminBundle\Service\Notice' ]
+        tags:
+            - { name: kernel.event_listener, event: cmspage.after_save, method: onMessage, priority: -10 }
+            - { name: kernel.event_listener, event: cmspage.after_insert, method: onMessage, priority: -10 }
+            - { name: kernel.event_listener, event: cmspage.after_delete, method: onMessage, priority: -10 }
+
+    Nfq\CmsPageBundle\EventListener\Doctrine\FileUploadListener:
+        arguments: [ '@Nfq\CmsPageBundle\Service\Admin\CmsUploadManager' ]
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: preFlush }
+            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: postRemove }

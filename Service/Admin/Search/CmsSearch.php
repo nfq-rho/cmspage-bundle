@@ -11,6 +11,7 @@
 
 namespace Nfq\CmsPageBundle\Service\Admin\Search;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Nfq\AdminBundle\Service\Generic\Search\GenericSearch;
@@ -25,7 +26,7 @@ class CmsSearch extends GenericSearch implements GenericSearchInterface
     /**
      * {@inheritdoc}
      */
-    protected function extendQuery(Request $request, QueryBuilder $queryBuilder)
+    protected function extendQuery(Request $request, QueryBuilder $queryBuilder): void
     {
         if ($name = $request->query->get('search')) {
             $queryBuilder->andWhere('search.name LIKE :name');
@@ -47,8 +48,8 @@ class CmsSearch extends GenericSearch implements GenericSearchInterface
     /**
      * @{inheritdoc}
      */
-    public function getRepository()
+    public function getRepository(): EntityRepository
     {
-        return $this->entityManager->getRepository('NfqCmsPageBundle:CmsPage');
+        return $this->getEntityManager()->getRepository('NfqCmsPageBundle:CmsPage');
     }
 }

@@ -33,9 +33,6 @@ class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
      */
     private $translator;
 
-    /**
-     * @param EntityManagerInterface $em
-     */
     public function __construct(EntityManagerInterface $em, TranslatorInterface $translator)
     {
         $this->em = $em;

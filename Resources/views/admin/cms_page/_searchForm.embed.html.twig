@@ -1,15 +1,16 @@
+{% trans_default_domain 'adminInterface' %}
 {% set searchUri = url("nfq_cmspage_list", app.request.query.all) %}
 {% set resetUri = url("nfq_cmspage_list") %}
-{% extends 'NfqAdminBundle:Base/_blocks:_searchPanel_col2.html.twig' %}
+{% extends '@NfqAdmin/base/_blocks/_searchPanel_col2.html.twig' %}
 
 {% block search_col1 %}
-    <input id="cms-page-search" type="text" placeholder="{{ 'cmspage.search_placeholder'|trans }}"
+    <input id="cms-page-search" type="text" placeholder="{{ 'admin.cms.search_placeholder'|trans }}"
            name="search" value="{{ app.request.get('search')|default }}" class="form-control" autocomplete="off"/>
 {% endblock %}
 
 {% block search_col2 %}
     <select name="content_type" class="form-control" id="cms-type">
-        <option value="">{{ 'cmspage.search_place_placeholder'|trans }}</option>
+        <option value="">{{ 'admin.cms.search_place_placeholder'|trans }}</option>
         {% for cms_type, cms_type_label in contentTypes %}
             <option value="{{ cms_type }}" {% if app.request.get('content_type') == cms_type %} selected="selected" {% endif %}>{{ cms_type_label|trans }}</option>
         {% endfor %}

@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Class CmsTypeManager
  * @package Nfq\CmsPageBundle\Service
  */
-class CmsTypeManager
+class CmsTypeManager implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
@@ -59,14 +59,13 @@ class CmsTypeManager
         return $this->adapters[$type];
     }
 
-    /**
-     * @return array
-     */
-    public function getTypes()
+    public function getTypes(): array
     {
         return array_combine(
             array_keys($this->adapters),
-            array_map(function($item) {return 'cmspage.labels.adapter_' . $item; }, array_keys($this->adapters)));
+            array_map(function ($item) {
+                return 'admin.cms.labels.adapter_' . $item;
+            }, array_keys($this->adapters)));
     }
 
     /**
@@ -113,7 +112,7 @@ class CmsTypeManager
      */
     private function resolveConfig(array $configuredTypes)
     {
-        foreach($configuredTypes as $name => $options) {
+        foreach ($configuredTypes as $name => $options) {
 
             $class = $this->resolveAdapterClass($name, $options);
 

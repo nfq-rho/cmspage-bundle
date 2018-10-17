@@ -12,9 +12,9 @@
 namespace Nfq\CmsPageBundle\Service\Random;
 
 use Doctrine\Common\Persistence\ObjectRepository;
+use Nfq\CmsPageBundle\Repository\CmsPageRepository;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Nfq\CmsPageBundle\Entity\CmsPage;
-use Nfq\CmsPageBundle\Entity\CmsPageRepository;
 use Nfq\CmsPageBundle\Service\Admin\CmsUploadManager;
 
 /**
@@ -43,7 +43,7 @@ abstract class RotatingItems
      * @param ObjectRepository $repository
      * @param Session $session
      */
-    public function __construct(CmsUploadManager $uploadManager, ObjectRepository $repository, Session $session)
+    public function __construct(CmsUploadManager $uploadManager, CmsPageRepository $repository, Session $session)
     {
         $this->uploadManager = $uploadManager;
         $this->repository = $repository;

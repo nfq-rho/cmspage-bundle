@@ -1,0 +1,26 @@
+{% trans_default_domain 'adminInterface' %}
+{% set main_menu = 'cmspages' %}
+
+{% extends app.request.query.get('isModal')|default(false) ? '@NfqAdmin/modal.html.twig' : '@NfqAdmin/base/index.html.twig' %}
+
+{% form_theme delete_form '@NfqAdmin/form.html.twig' %}
+
+{% if app.request.query.get('isModal') %}
+    {% block page_box_header %}
+        {{ entity.name }} - {{ 'admin.cms.cmspage_remove'|trans }}
+    {% endblock %}
+{% endif %}
+
+{% block page_box_body %}
+    <div class="row">
+        <div class="col-lg-12">
+            {{ 'admin.cms.cmspage_remove_text'|trans }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-offset-8 col-sm-4">
+            {{ form(delete_form) }}
+        </div>
+    </div>
+{% endblock %}

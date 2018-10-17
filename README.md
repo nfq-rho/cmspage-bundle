@@ -33,11 +33,11 @@ Add NfqCmsPageBundle in to your composer.json:
         		container_aware: false
         		#Set to true if this adapter has featured image
         		has_featured_image: true
-			html: #Serves as simple HTML content widget, which can be edited through CMS pages
-				#These types of widgets do not have slug
-				public: false
-				container_aware: false
-				has_featured_image: false
+			    html: #Serves as simple HTML content widget, which can be edited through CMS pages
+            #These types of widgets do not have slug
+            public: false
+            container_aware: false
+            has_featured_image: false
         places: ~
 
 `places` config allows you to configure places for links to cms pages. You can configure, for example, Footer Block link     place and assign multiple pages for that place. Then in twig template just add following code:

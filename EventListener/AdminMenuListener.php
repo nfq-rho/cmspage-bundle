@@ -42,6 +42,7 @@ class AdminMenuListener extends AdminMenuListenerBase
             ->createItem('admin.side_menu.cms_pages', ['route' => 'nfq_cmspage_list'])
             ->setExtras(
                 [
+                    'label-icon' => 'fa fa-newspaper',
                     'translation_domain' => 'adminInterface',
                 ]
             );
