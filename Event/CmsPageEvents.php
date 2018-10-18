@@ -13,7 +13,7 @@ namespace Nfq\CmsPageBundle\Event;
 
 /**
  * Class CmsPageEvents
- * @package Nfq\CmsPageBundle
+ * @package Nfq\CmsPageBundle\Event
  */
 final class CmsPageEvents
 {
