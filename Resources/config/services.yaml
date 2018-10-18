@@ -13,7 +13,7 @@ services:
 
     Nfq\CmsPageBundle\:
         resource: '../../*'
-        exclude: '../../{DependencyInjection,Entity,Migrations,Tests,NfqCmsPageBundle.php}'
+        exclude: '../../{DependencyInjection,Entity,Event,Migrations,Tests,NfqCmsPageBundle.php}'
 
     Nfq\CmsPageBundle\Controller\:
         resource: '../../Controller'
@@ -43,7 +43,8 @@ services:
         tags:
             - { name: nfq_admin.search, manager: Nfq\CmsPageBundle\Service\Admin\CmsManager }
 
-    Nfq\AdminBundle\EventListener\NoticeListener:
+    nfq_cmspage.notice_listener:
+        class: Nfq\AdminBundle\EventListener\NoticeListener
         arguments: [ '@Nfq\AdminBundle\Service\Notice' ]
         tags:
             - { name: kernel.event_listener, event: cmspage.after_save, method: onMessage, priority: -10 }

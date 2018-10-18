@@ -18,7 +18,7 @@
         "gedmo/doctrine-extensions": "2.4.*",
         "stfalcon/tinymce-bundle": "^1.1|^2.1",
 
-        "nfq-rho/admin-bundle": "@dev"
+        "nfq-rho/admin-bundle": "dev"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.0"

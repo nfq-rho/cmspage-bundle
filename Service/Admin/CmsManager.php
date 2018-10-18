@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -11,7 +11,7 @@
 
 namespace Nfq\CmsPageBundle\Service\Admin;
 
-use Nfq\CmsPageBundle\CmsPageEvents;
+use Nfq\CmsPageBundle\Event\CmsPageEvents;
 use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\AdminBundle\Service\Admin\AbstractAdminManager;
 use Nfq\CmsPageBundle\Repository\CmsPageRepository;
@@ -27,44 +27,26 @@ class CmsManager extends AbstractAdminManager
         parent::__construct($repository);
     }
 
-    /**
-     * @param $entity
-     * @param string $beforeEventName
-     * @param string $afterEventName
-     * @return mixed
-     */
     public function delete(
         $entity,
-        $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_DELETE,
-        $afterEventName = CmsPageEvents::CMSPAGE_AFTER_DELETE
+        string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_DELETE,
+        string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_DELETE
     ) {
         return parent::delete($entity, $beforeEventName, $afterEventName);
     }
 
-    /**
-     * @param $entity
-     * @param string $beforeEventName
-     * @param string $afterEventName
-     * @return mixed
-     */
     public function insert(
         $entity,
-        $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_INSERT,
-        $afterEventName = CmsPageEvents::CMSPAGE_AFTER_INSERT
+        string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_INSERT,
+        string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_INSERT
     ) {
         return parent::insert($entity, $beforeEventName, $afterEventName);
     }
 
-    /**
-     * @param $entity
-     * @param string $beforeEventName
-     * @param string $afterEventName
-     * @return mixed
-     */
     public function save(
         $entity,
-        $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_SAVE,
-        $afterEventName = CmsPageEvents::CMSPAGE_AFTER_SAVE
+        string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_SAVE,
+        string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_SAVE
     ) {
         return parent::save($entity, $beforeEventName, $afterEventName);
     }

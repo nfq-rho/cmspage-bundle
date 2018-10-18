@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -27,7 +27,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CmsPageType extends TranslatableType
 {
-    public function callBuildForm(FormBuilderInterface $builder, array $options)
+    public function callBuildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('isActive', CheckboxType::class, [
@@ -74,7 +74,7 @@ class CmsPageType extends TranslatableType
             }
     }
 
-    public function callSetDefaultOptions(OptionsResolver $resolver)
+    public function callSetDefaultOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setRequired(['places'])
@@ -84,10 +84,7 @@ class CmsPageType extends TranslatableType
             ]);
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'cmspage';
     }

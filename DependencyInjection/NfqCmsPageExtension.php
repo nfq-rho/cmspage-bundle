@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -38,11 +38,7 @@ class NfqCmsPageExtension extends Extension
         $this->mapConfig($container, $configs[0]);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    private function mapConfig(ContainerBuilder $container, array $config)
+    private function mapConfig(ContainerBuilder $container, array $config): void
     {
         $uploadDir = ltrim($config['upload_dir'], DIRECTORY_SEPARATOR);
 

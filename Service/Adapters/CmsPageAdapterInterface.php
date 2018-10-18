@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -12,8 +12,8 @@
 namespace Nfq\CmsPageBundle\Service\Adapters;
 
 use Nfq\CmsPageBundle\Entity\CmsPage;
+use Nfq\CmsPageBundle\Form\CmsPageType;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -22,34 +22,15 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 interface CmsPageAdapterInterface extends ContainerAwareInterface
 {
-    /**
-     * @return string
-     */
-    public function getType();
+    public function getType(): string;
 
-    /**
-     * @return Form
-     */
-    public function getFormType();
+    public function getFormType(): CmsPageType;
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @return void
-     */
-    public function modifyForm(FormBuilderInterface $builder);
+    public function modifyForm(FormBuilderInterface $builder): void;
 
-    /**
-     * @return Form
-     */
-    public function getFormTypeInstance();
+    public function getFormTypeInstance(): CmsPageType;
 
-    /**
-     * @return CmsPage
-     */
-    public function getEntity();
+    public function getEntity(): CmsPage;
 
-    /**
-     * @return CmsPage
-     */
-    public function getEntityInstance();
+    public function getEntityInstance(): CmsPage;
 }

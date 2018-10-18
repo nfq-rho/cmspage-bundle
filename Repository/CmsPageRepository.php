@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -23,6 +23,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRepositoryInterface
 {
+    /** @var string */
     protected $entityClass = CmsPage::class;
 
     public function __construct(RegistryInterface $registry)
@@ -30,9 +31,6 @@ class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRep
         parent::__construct($registry, $this->entityClass);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUsedPlaceSlots(string $placeId): int
     {
         $qb = $this->getQueryBuilder()
@@ -44,10 +42,6 @@ class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRep
     }
 
     /**
-     * @param string $idf
-     * @param array $criteria
-     * @param string $locale
-     * @return CmsPage
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getCmsPage(string $idf, array $criteria = [], string $locale = null): ?CmsPage
@@ -70,9 +64,6 @@ class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRep
     /**
      * Get CMS page by id with translated content.
      *
-     * @param int $id
-     * @param string $locale
-     * @return null|CmsPage
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getEditableEntity($id, ?string $locale): ?CmsPage
@@ -85,11 +76,6 @@ class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRep
         return $query->getOneOrNullResult(AbstractQuery::HYDRATE_OBJECT);
     }
 
-    /**
-     * @param CmsPage $cmsPage
-     *
-     * @return array
-     */
     public function getTranslations(CmsPage $cmsPage): array
     {
         return $this

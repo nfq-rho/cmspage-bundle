@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -25,9 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CmsUploadManager
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $config;
 
     public function __construct(array $bundleConfig)
@@ -35,10 +33,7 @@ class CmsUploadManager
         $this->resolveConfig($bundleConfig);
     }
 
-    /**
-     * @param $config
-     */
-    private function resolveConfig($config)
+    private function resolveConfig(array $config): void
     {
         $resolver = new OptionsResolver();
         $resolver->setRequired(['upload_absolute', 'upload_relative']);
@@ -46,10 +41,7 @@ class CmsUploadManager
         $this->config = $resolver->resolve($config);
     }
 
-    /**
-     * @param CmsPage $entity
-     */
-    public function upload(CmsPage $entity)
+    public function upload(CmsPage $entity): void
     {
         if (null === $entity->getFile()) {
             return;
@@ -62,11 +54,7 @@ class CmsUploadManager
         $this->file = null;
     }
 
-    /**
-     * @param int $id
-     * @param string $tempImage
-     */
-    public function removeFile($id, $tempImage, $locale)
+    public function removeFile(int $id, string $tempImage, string $locale): void
     {
         //Do not delete temp image if locales are different
         if (strpos($tempImage, '_' . crc32($locale)) === false) {
@@ -80,9 +68,6 @@ class CmsUploadManager
         }
     }
 
-    /**
-     * @param int $entityId
-     */
     public function removeFiles($entityId)
     {
         $filesDir = $this->getUploadPath($entityId);
@@ -107,10 +92,8 @@ class CmsUploadManager
 
     /**
      * @param CmsPage|array $entity
-     *
-     * @return string|void
      */
-    public function getWebPathForEntity($entity)
+    public function getWebPathForEntity($entity): string
     {
         if ($entity instanceof CmsPage && $entity->getImage()) {
             return $this->getWebPath($entity->getId(), $entity->getImage()) ;
@@ -121,26 +104,14 @@ class CmsUploadManager
         return '';
     }
 
-    /**
-     * @param int $id
-     * @param string $image
-     *
-     * @return string
-     */
-    private function getWebPath($id, $image = '')
+    private function getWebPath($id, string $image = ''): string
     {
         $_id = md5($id);
 
         return DIRECTORY_SEPARATOR . $this->config['upload_relative'] . $_id . DIRECTORY_SEPARATOR . $image;
     }
     
-    /**
-     * @param int $id
-     * @param string $image
-     *
-     * @return string
-     */
-    private function getUploadPath($id, $image = '')
+    private function getUploadPath($id, string $image = ''): string
     {
         $_id = md5($id);
 

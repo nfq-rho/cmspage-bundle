@@ -55,32 +55,33 @@
             </thead>
             <tbody>
             {% for key, cmsPage in pagination.pagination %}
+                {% set modalHref = path('nfq_cmspage_update', {'id': cmsPage.id, '_type': cmsPage.contentType }) %}
                 <tr data-id="{{ cmsPage.id }}" {% if loop.index is odd %} class="color" {% else %} class="no-color" {% endif %}>
                     <td>{{ cmsPage.id }}</td>
-                    <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ path("nfq_cmspage_update", {'id': cmsPage.id, '_type': cmsPage.contentType }) }}">
+                    <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ modalHref }}">
                         {% if cmsPage.isActive %}
                             <span class="text-green"> <i class="fas fa-check-circle"></i></span>
                         {% else %}
                             <span class="text-red"> <i class="fas fa-circle"></i></span>
                         {% endif %}
                     </td>
-                    <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ path("nfq_cmspage_update", {'id': cmsPage.id, '_type': cmsPage.contentType }) }}">
+                    <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ modalHref}}">
                         {% if cmsPage.contentType is not empty %}
                             {{ ('admin.cms.labels.adapter_' ~ cmsPage.contentType)|trans }}
                         {% endif %}
                     </td>
-                    <td style="width: 110px" data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ path("nfq_cmspage_update", {'id': cmsPage.id, '_type': cmsPage.contentType }) }}">
+                    <td style="width: 110px" data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ modalHref }}">
                         {% if cmsPage.image is not empty %}
                             <img src="{{ cms_image_src(cmsPage) }}" alt="Cms Page image" style="width:100px;">
                         {% endif %}
                     </td>
-                    <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ path("nfq_cmspage_update", {'id': cmsPage.id, '_type': cmsPage.contentType }) }}">
+                    <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ modalHref }}">
                         {{ cmsPage.identifier }}
                     </td>
-                    <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ path("nfq_cmspage_update", {'id': cmsPage.id, '_type': cmsPage.contentType }) }}">
+                    <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ modalHref }}">
                         {{ cmsPage.name }}
                     </td>
-                    <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ path("nfq_cmspage_update", {'id': cmsPage.id, '_type': cmsPage.contentType }) }}">
+                    <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ modalHref }}">
                         {{ cmsPage.slug }}
                     </td>
                     <td class="col-lg-1">

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -14,7 +14,8 @@ namespace Nfq\CmsPageBundle\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Nfq\AdminBundle\PlaceManager\PlaceManagerInterface;
 use Nfq\AdminBundle\PlaceManager\PlaceManager;
-use Nfq\CmsPageBundle\Entity\CmsPageRepository;
+use Nfq\AdminBundle\PlaceManager\Repository\PlaceAwareRepositoryInterface;
+use Nfq\CmsPageBundle\Repository\CmsPageRepository;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -23,9 +24,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
+    /** @var EntityManagerInterface */
     private $em;
 
     /**
@@ -105,10 +104,7 @@ class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
         return $query->getResult();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getPlaceAwareRepository()
+    protected function getPlaceAwareRepository(): PlaceAwareRepositoryInterface
     {
         return $this->em->getRepository('NfqCmsPageBundle:CmsPage');
     }

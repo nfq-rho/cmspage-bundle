@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -21,10 +21,7 @@ use Nfq\AdminBundle\Menu\AdminMenuListener as AdminMenuListenerBase;
  */
 class AdminMenuListener extends AdminMenuListenerBase
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function doMenuConfigure(ConfigureMenuEvent $event)
+    protected function doMenuConfigure(ConfigureMenuEvent $event): void
     {
         $menu = $event->getMenu();
         $node = $this->getCmsPageNode();
@@ -32,10 +29,7 @@ class AdminMenuListener extends AdminMenuListenerBase
         $menu->addChild($node);
     }
 
-    /**
-     * @return ItemInterface
-     */
-    private function getCmsPageNode()
+    private function getCmsPageNode(): ItemInterface
     {
         return $this
             ->getFactory()

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -12,7 +12,6 @@
 namespace Nfq\CmsPageBundle\Service\Adapters;
 
 use Nfq\CmsPageBundle\Entity\CmsPage;
-use Nfq\CmsPageBundle\Form\CmsPageType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -21,31 +20,14 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class HtmlAdapter extends AbstractAdapter
 {
-    /**
-     * @cons string
-     */
-    const TYPE = 'html';
+    public const TYPE = 'html';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return self::TYPE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormType()
-    {
-        return new CmsPageType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function modifyForm(FormBuilderInterface $builder)
+    public function modifyForm(FormBuilderInterface $builder): void
     {
         parent::modifyForm($builder);
 
@@ -55,10 +37,7 @@ class HtmlAdapter extends AbstractAdapter
         $builder->remove('places_config');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getEntity()
+    public function getEntity(): CmsPage
     {
         $entity = new CmsPage();
 

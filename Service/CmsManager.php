@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -37,18 +37,13 @@ class CmsManager
         $this->defaultLocale = $defaultLocale;
     }
 
-    /**
-     * @param AuthorizationCheckerInterface $authChecker
-     */
     public function setAuthChecker(AuthorizationCheckerInterface $authChecker)
     {
         $this->authChecker = $authChecker;
     }
 
-    /**
-     * @return CmsPageRepository
-     */
-    public function getRepository()
+    public function getRepository(): CmsPageRepository
+
     {
         return $this->repository;
     }

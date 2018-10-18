@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-/**                                                                       ````
+/**
  * This file is part of the "NFQ Bundles" package.
  *
  * (c) NFQ Technologies UAB <info@nfq.com>
@@ -64,13 +64,10 @@ class CmsPageController extends Controller
     }
 
     /**
-     * Lists all entities.
-     *
      * @Template()
-     * @param Request $request
      * @return array
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): array
     {
         $response = $this->traitIndexAction($request);
 
@@ -90,7 +87,7 @@ class CmsPageController extends Controller
      * @param Request $request
      * @return array
      */
-    public function newAction(Request $request)
+    public function newAction(Request $request): array
     {
         $this->setAdapter($request);
         return $this->traitNewAction($request);
@@ -140,7 +137,7 @@ class CmsPageController extends Controller
      * @param Request $request
      * @return mixed
      */
-    protected function getIndexActionResultsArray(Request $request)
+    protected function getIndexActionResults(Request $request)
     {
         return $this->cmsManager->getResults($request);
     }

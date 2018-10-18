@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -25,62 +25,39 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class AbstractAdapter implements CmsPageAdapterInterface
 {
-    /**
-     * @var ContainerInterface
-     */
+    /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $options;
 
-    /**
-     * @var CmsPage
-     */
+    /** @var CmsPage */
     protected $entity;
 
-    /**
-     * @var CmsPageType
-     */
+    /** @var CmsPageType */
     protected $formType;
 
-    /**
-     * @param array $options
-     */
     public function __construct(array $options)
     {
         $this->options = $options;
     }
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
-    /**
-     * @return bool
-     */
-    protected function getIsPublic()
+    protected function getIsPublic(): bool
     {
         return $this->options['public'];
     }
 
-    /**
-     * @return bool
-     */
-    protected function hasFeaturedImage()
+    protected function hasFeaturedImage(): bool
     {
         return $this->options['has_featured_image'];
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     */
-    public function modifyForm(FormBuilderInterface $builder)
+    public function modifyForm(FormBuilderInterface $builder): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
             $form = $event->getForm();
@@ -96,19 +73,18 @@ abstract class AbstractAdapter implements CmsPageAdapterInterface
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormTypeInstance()
+    public function getFormType(): CmsPageType
+    {
+        return new CmsPageType();
+    }
+
+    public function getFormTypeInstance(): CmsPageType
     {
         is_null($this->formType) && $this->formType = $this->getFormType();
         return $this->formType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getEntityInstance()
+    public function getEntityInstance(): CmsPage
     {
         is_null($this->entity) && $this->entity = $this->getEntity();
         return $this->entity;

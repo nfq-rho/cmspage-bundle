@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -38,7 +38,7 @@ class CmsPageController extends Controller
     /**
      * @var string
      */
-    protected $defaultTemplate = '@NfqCmsPage/CmsPage/view.html.twig';
+    protected $defaultTemplate = '@NfqCmsPage/cms_page/view.html.twig';
 
     /**
      * @param Request $request
@@ -94,7 +94,7 @@ class CmsPageController extends Controller
     {
         $twigTemplateLoader = $this->get('twig.loader');
 
-        $customTemplate = sprintf('@NfqCmsPage/CmsPage/_custom:%s.html.twig', $entity->getIdentifier());
+        $customTemplate = sprintf('@NfqCmsPage/cms_page/_custom:%s.html.twig', $entity->getIdentifier());
         $finalTemplate = $this->defaultTemplate;
 
         if ($twigTemplateLoader->exists($customTemplate)) {

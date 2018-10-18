@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -23,9 +23,6 @@ use Nfq\AdminBundle\Service\Generic\Search\GenericSearchInterface;
  */
 class CmsSearch extends GenericSearch implements GenericSearchInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function extendQuery(Request $request, QueryBuilder $queryBuilder): void
     {
         if ($name = $request->query->get('search')) {
@@ -45,9 +42,6 @@ class CmsSearch extends GenericSearch implements GenericSearchInterface
         }
     }
 
-    /**
-     * @{inheritdoc}
-     */
     public function getRepository(): EntityRepository
     {
         return $this->getEntityManager()->getRepository('NfqCmsPageBundle:CmsPage');
