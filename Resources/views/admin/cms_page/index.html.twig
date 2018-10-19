@@ -1,5 +1,4 @@
 {% trans_default_domain 'adminInterface' %}
-{% set main_menu = 'nfq_cmspages' %}
 {% extends '@NfqAdmin/base/index.html.twig' %}
 {% import '@NfqAdmin/_macro/sorting.html.twig' as nfqSorting %}
 
@@ -8,14 +7,14 @@
 {% endblock %}
 
 {% block page_subtitle %}
-    {{ 'admin.cms.cmspage_head_title'|trans }}
+    {{ 'admin.cms.cmspage_head_subtitle'|trans }}
 {% endblock %}
 
 {% block page_box_header %}
     {{ 'admin.cms.head_total'|trans }} ({{ pagination.getTotalItemCount }})
 {% endblock %}
 
-{% block buttons %}
+{% block page_header_buttons %}
     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
         {{ 'admin.cms.cmspage_new'|trans({'%cms_type%': ''}) }} <span class="caret"></span>
     </button>
@@ -45,7 +44,7 @@
                         {{ nfqSorting.sortUrl('nfq_cmspage_list', 'search.identifier', 'admin.cms.labels.identifier') }}
                     </th>
                     <th>
-                        {{ nfqSorting.sortUrl('nfq_cmspage_list', 'search.name', 'admin.cms.labels.name') }}
+                        {{ nfqSorting.sortUrl('nfq_cmspage_list', 'search.title', 'admin.cms.labels.title') }}
                     </th>
                     <th>
                         {{ nfqSorting.sortUrl('nfq_cmspage_list', 'search.slug', 'admin.cms.labels.slug') }}
@@ -79,26 +78,26 @@
                         {{ cmsPage.identifier }}
                     </td>
                     <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ modalHref }}">
-                        {{ cmsPage.name }}
+                        {{ cmsPage.title }}
                     </td>
                     <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ modalHref }}">
                         {{ cmsPage.slug }}
                     </td>
-                    <td class="col-lg-1">
-                        <span class="text-red" data-toggle="modal" data-href="{{ url('nfq_cmspage_delete', {id: cmsPage.id, '_type': cmsPage.contentType}) }}">
+                    <td>
+                        <a class="text-red" data-toggle="modal" data-href="{{ url('nfq_cmspage_delete', {id: cmsPage.id, '_type': cmsPage.contentType}) }}">
                             <i class="fas fa-trash"></i>
-                        </span>
+                        </a>
                         &nbsp;
-                        {#{% if cmsPage.isPublic %}#}
+                        {% if cmsPage.active %}
                         <a href="{{ cms_url(cmsPage.identifier) }}" target="_blank">
                             <i class="fas fa-eye"></i>
                         </a>
-                        {#{% endif %}#}
+                        {% endif %}
                     </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="8" class="text-center">{{ 'cmspage.cmspage_nopages'|trans }}</td>
+                    <td colspan="8" class="text-center">{{ 'admin.cms.cmspage_nopages'|trans }}</td>
                 </tr>
             {% endfor %}
             </tbody>

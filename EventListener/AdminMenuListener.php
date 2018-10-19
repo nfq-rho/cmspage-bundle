@@ -38,6 +38,13 @@ class AdminMenuListener extends AdminMenuListenerBase
                 [
                     'label-icon' => 'fa fa-newspaper',
                     'translation_domain' => 'adminInterface',
+                    'routes' => [
+                        'nfq_cmspage_list',
+                        'nfq_cmspage_new',
+                        'nfq_cmspage_create',
+                        'nfq_cmspage_update',
+                        'nfq_cmspage_delete',
+                    ]
                 ]
             );
     }

@@ -26,8 +26,8 @@ class CmsSearch extends GenericSearch implements GenericSearchInterface
     protected function extendQuery(Request $request, QueryBuilder $queryBuilder): void
     {
         if ($name = $request->query->get('search')) {
-            $queryBuilder->andWhere('search.name LIKE :name');
-            $queryBuilder->setParameter('name', '%' . $name . '%');
+            $queryBuilder->andWhere('search.title LIKE :title');
+            $queryBuilder->setParameter('title', '%' . $name . '%');
         }
 
         if ($contentType = $request->query->get('content_type')) {

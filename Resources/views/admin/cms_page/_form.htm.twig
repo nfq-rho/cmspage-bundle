@@ -82,6 +82,6 @@
 
         {{ form_end(form) }}
 
-        {% include '@NfqAdmin/_form/_form_delete.html.twig' with {'form': form} only %}
+        {% include '@NfqAdmin/_form/_form_delete.html.twig' with {'form': delete_form|default(false)} only %}
     </div>
 {% endfor %}

@@ -14,7 +14,6 @@ namespace Nfq\CmsPageBundle\Service;
 use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\CmsPageBundle\Repository\CmsPageRepository;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 /**
  * Class CmsManager
@@ -31,15 +30,14 @@ class CmsManager
     /** @var AuthorizationCheckerInterface */
     private $authChecker;
 
-    public function __construct(CmsPageRepository $repository, string $defaultLocale)
-    {
+    public function __construct(
+        CmsPageRepository $repository,
+        AuthorizationCheckerInterface $authChecker,
+        string $defaultLocale
+    ) {
         $this->repository = $repository;
-        $this->defaultLocale = $defaultLocale;
-    }
-
-    public function setAuthChecker(AuthorizationCheckerInterface $authChecker)
-    {
         $this->authChecker = $authChecker;
+        $this->defaultLocale = $defaultLocale;
     }
 
     public function getRepository(): CmsPageRepository
@@ -68,14 +66,14 @@ class CmsManager
             ];
 
             if ($raw) {
-                $result['name'] = $entity->getName();
-                $result['place_name'] = $entity->getPlaceName();
+                $result['title'] = $entity->getTitle();
+                $result['place_title'] = $entity->getPlaceTitleOverwrite();
             }
         } catch (\Exception $ex) {
             $result = ['slug' => '#'];
 
             if ($raw) {
-                $result['name'] = '';
+                $result['title'] = '';
             }
         }
 
@@ -89,7 +87,7 @@ class CmsManager
      * @return CmsPage
      * @throws \Exception
      */
-    public function getCmsPage($criteria, $locale = null, $silent = false)
+    public function getCmsPage(string $criteria, string $locale = null, $silent = false)
     {
         $entity = null;
 
@@ -115,12 +113,10 @@ class CmsManager
     }
 
     /**
-     * @param string $slug
-     * @param string|null $locale - no need to set locale if it is current request locale
-     * @return CmsPage
+     * No need to set locale if it is current request locale
      * @throws \Exception
      */
-    public function getCmsPageBySlug($slug, $locale = null)
+    public function getCmsPageBySlug(string $slug, ?string $locale = null): CmsPage
     {
         if (empty($slug)) {
             throw new \Exception('cms.page_not_found');
@@ -145,11 +141,9 @@ class CmsManager
     }
 
     /**
-     * @param string $place
-     * @param string $locale
-     * @return array
+     * @return CmsPage[]
      */
-    public function getCmsPagesByPlace($place, $locale = '')
+    public function getCmsPagesByPlace(string $place, ?string $locale = null): array
     {
         $criteria = [
             'cms.place' => '%' . $place . '%',
@@ -166,12 +160,10 @@ class CmsManager
     }
 
     /**
-     * @param string $identifier
-     * @param string $locale - no need to set locale if it is current request locale
-     * @return CmsPage
+     * No need to set locale if it is current request locale
      * @throws \Exception
      */
-    public function getCmsPageByIdentifier($identifier, $locale = '')
+    public function getCmsPageByIdentifier(string $identifier, ?string $locale = null): CmsPage
     {
         if (empty($identifier)) {
             throw new \Exception('cms.page_not_found');
@@ -194,11 +186,7 @@ class CmsManager
         return $entity;
     }
 
-    /**
-     * @param string $type
-     * @return array
-     */
-    public function getPagesByType($type)
+    public function getPagesByType(string $type): array
     {
         $criteria = ['cms.contentType' => $type];
 
@@ -211,12 +199,7 @@ class CmsManager
         return $qb->getQuery()->getArrayResult();
     }
 
-    /**
-     * @param string $identifier
-     * @param string $locale
-     * @return string
-     */
-    public function getCmsPageText($identifier, $locale)
+    public function getCmsPageText(string $identifier, ?string $locale = null): string
     {
         if (empty($identifier)) {
             return '';
@@ -239,13 +222,7 @@ class CmsManager
         return $text;
     }
 
-    /**
-     *
-     * @param CmsPage $cmsPage
-     *
-     * @return array
-     */
-    public function getCmsPageTranslations(CmsPage $cmsPage)
+    public function getCmsPageTranslations(CmsPage $cmsPage): array
     {
         //Get all entity translations
         $translations = $this->getRepository()->getTranslations($cmsPage);
@@ -259,33 +236,25 @@ class CmsManager
         return $translations;
     }
 
-    private function hideFromPublic(array &$criteria)
+    private function hideFromPublic(array &$criteria): void
     {
-        try {
-            //Add isActive restriction for all other user than admin
-            if (!$this->authChecker instanceof AuthorizationCheckerInterface
-                || !$this->authChecker->isGranted(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN'])
-            ) {
-                $criteria['cms.isActive'] = true;
-            }
-        } catch (AuthenticationCredentialsNotFoundException $ex) {
+        //Add isActive restriction for all other user than admin
+        if ($this->authChecker->isGranted(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN'])) {
             $criteria['cms.isActive'] = true;
         }
     }
 
-    private function addDefaultLocaleTranslation(CmsPage $cmsPage, &$translations)
+    private function addDefaultLocaleTranslation(CmsPage $cmsPage, array &$translations): void
     {
         //This is needed, because original entity data is not returned as translation
         $defaultEntity = $this->getRepository()->getEditableEntity($cmsPage->getId(), $this->defaultLocale);
         $defaultSlug = $defaultEntity->getSlug();
 
         $translations[$this->defaultLocale] = [
-            'name' => $defaultEntity->getName(),
+            'title' => $defaultEntity->getTitle(),
             'text' => $defaultEntity->getText(),
             'slug' => !empty($defaultSlug) ? $defaultSlug : $defaultEntity->getIdentifier(),
             'image' => $defaultEntity->getImage(),
         ];
-
-        return $translations;
     }
 }

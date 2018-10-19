@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nfq\AdminBundle\PlaceManager\PlaceManagerInterface;
 use Nfq\AdminBundle\PlaceManager\PlaceManager;
 use Nfq\AdminBundle\PlaceManager\Repository\PlaceAwareRepositoryInterface;
+use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\CmsPageBundle\Repository\CmsPageRepository;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -27,9 +28,7 @@ class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
     /** @var EntityManagerInterface */
     private $em;
 
-    /**
-     * @var TranslatorInterface
-     */
+    /** @var TranslatorInterface */
     private $translator;
 
     public function __construct(EntityManagerInterface $em, TranslatorInterface $translator)
@@ -41,7 +40,7 @@ class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function formatPlaceChoice(&$item, $key)
+    public function formatPlaceChoice(array &$item, string $key): void
     {
         $item = sprintf('%s (%d/%d)',
             $this->translator->trans($item['title']),
@@ -52,22 +51,23 @@ class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
     /**
      * Get categories in given place
      *
-     * @param string $placeId
-     * @param string $locale
-     * @return array
+     * @return CmsPage[]
      */
-    public function getItemsInPlace($placeId, $locale)
+    public function getItemsInPlace(string $placeId, string $locale, string $sortOrder = 'ASC'): array
     {
         $criteria = [
             'places' => '%' . $placeId . '%',
             'isActive' => true,
         ];
 
-        $orderBy = [];
-
-        /** @var CmsPageRepository $repo */
-        $repo = $this->getPlaceAwareRepository();
-        $query = $repo->getTranslatableQueryByCriteria($criteria, $locale);
+        $query = $this->getPlaceAwareRepository()
+            ->getTranslatableQueryByCriteriaSorted(
+                $criteria,
+                $locale,
+                true,
+                'sortPosition',
+                $sortOrder
+                );
 
         $query
             ->expireQueryCache(true)
@@ -80,21 +80,17 @@ class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
     /**
      * Get cms pages in given place sorted by sort position.
      *
-     * @param string $placeId
-     * @param string $locale
-     * @param string $sortOrder
-     * @return array
+     * @return CmsPage[]
      */
-    public function getItemsInPlaceSorted($placeId, $locale, $sortOrder)
+    public function getItemsInPlaceSorted(string $placeId, string $locale, string $sortOrder)
     {
         $criteria = [
             'places' => '%' . $placeId . '%',
             'isActive' => true,
         ];
 
-        /** @var CmsPageRepository $repo */
-        $repo = $this->getPlaceAwareRepository();
-        $query = $repo->getTranslatableQueryByCriteriaSorted($criteria, $locale, $sortOrder);
+        $query = $this->getPlaceAwareRepository()
+            ->getTranslatableQueryByCriteriaSorted($criteria, $locale, true, $sortOrder);
 
         $query
             ->expireQueryCache(true)
@@ -104,6 +100,9 @@ class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
         return $query->getResult();
     }
 
+    /**
+     * @return CmsPageRepository
+     */
     protected function getPlaceAwareRepository(): PlaceAwareRepositoryInterface
     {
         return $this->em->getRepository('NfqCmsPageBundle:CmsPage');

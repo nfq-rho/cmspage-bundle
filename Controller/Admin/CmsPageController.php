@@ -19,6 +19,7 @@ use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\CmsPageBundle\Service\CmsTypeManager;
 use Nfq\CmsPageBundle\Service\Admin\CmsManager;
 use Nfq\CmsPageBundle\Service\Adapters\CmsPageAdapterInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -65,7 +66,6 @@ class CmsPageController extends Controller
 
     /**
      * @Template()
-     * @return array
      */
     public function indexAction(Request $request): array
     {
@@ -83,9 +83,6 @@ class CmsPageController extends Controller
 
     /**
      * @Template()
-     *
-     * @param Request $request
-     * @return array
      */
     public function newAction(Request $request): array
     {
@@ -93,10 +90,7 @@ class CmsPageController extends Controller
         return $this->traitNewAction($request);
     }
 
-    /**
-     * @param Request $request
-     */
-    private function setAdapter(Request $request)
+    private function setAdapter(Request $request): void
     {
         $this->adapter = $this->getTypeManager()->getAdapterFromRequest($request);
     }
@@ -104,8 +98,7 @@ class CmsPageController extends Controller
     /**
      * @Template()
      *
-     * @param Request $request
-     * @return array
+     * @return array|RedirectResponse
      */
     public function createAction(Request $request)
     {
@@ -116,8 +109,7 @@ class CmsPageController extends Controller
     /**
      * @Template()
      *
-     * @param Request $request
-     * @return array
+     * @return array|RedirectResponse
      */
     public function updateAction(Request $request, $id)
     {
@@ -125,28 +117,20 @@ class CmsPageController extends Controller
         return $this->traitUpdateAction($request, $id);
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function getEditableEntityForLocale($id, $locale)
+    protected function getEditableEntityForLocale($id, string $locale = null)
     {
         return $this->cmsManager->getEditableEntity($id, $locale);
     }
 
     /**
-     * @param Request $request
-     * @return mixed
+     * {@inheritdoc}
      */
     protected function getIndexActionResults(Request $request)
     {
         return $this->cmsManager->getResults($request);
     }
 
-    /**
-     * @param CmsPage $entity
-     * @return RedirectResponse
-     */
-    protected function redirectToPreview(CmsPage $entity)
+    protected function redirectToPreview(CmsPage $entity): RedirectResponse
     {
         $params = $this->get(CmsManager::class)
             ->getCmsUrlParams($entity->getIdentifier(), $entity->getLocale());
@@ -158,24 +142,17 @@ class CmsPageController extends Controller
         return new RedirectResponse($url);
     }
 
-    /**
-     * @param Request $request
-     * @param CmsPage|null $entity
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    protected function redirectToIndex(Request $request, CmsPage $entity = null)
+    protected function redirectToIndex(Request $request, CmsPage $entity = null): RedirectResponse
     {
         $redirectParams = $this->getRedirectToIndexParams($request, $entity);
 
-        $redirectUri = $this->generateUrl('nfq_cmspage_list', $redirectParams->all());
-
-        return $this->redirect($redirectUri);
+        return $this->redirect($this->generateUrl('nfq_cmspage_list', $redirectParams->all()));
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getCreateFormAndEntity($locale)
+    protected function getCreateFormAndEntity(string $locale): array
     {
         $formType = get_class($this->adapter->getFormTypeInstance());
         $entity = $this->adapter->getEntityInstance();
@@ -201,11 +178,7 @@ class CmsPageController extends Controller
         return [$entity, $formBuilder->getForm()];
     }
 
-    /**
-     * @param CmsPage $entity
-     * @return array
-     */
-    protected function getEditDeleteForms($entity)
+    protected function getEditDeleteForms(CmsPage $entity): array
     {
         $formType = get_class($this->adapter->getFormTypeInstance());
 
@@ -236,33 +209,24 @@ class CmsPageController extends Controller
     /**
      * {@inheritdoc}
      */
-    protected function getDeleteForm($id)
+    protected function getDeleteForm($id): FormInterface
     {
         $uri = $this->generateUrl('nfq_cmspage_delete', ['id' => $id]);
 
         return $this->getFormService()->getDeleteForm($uri);
     }
 
-    /**
-     * @param CmsPage $entity
-     */
-    protected function insertAfterCreateAction($entity)
+    protected function insertAfterCreateAction(CmsPage $entity): void
     {
         $this->cmsManager->insert($entity);
     }
 
-    /**
-     * @param CmsPage $entity
-     */
-    protected function deleteAfterDeleteAction($entity)
+    protected function deleteAfterDeleteAction(CmsPage $entity): void
     {
         $this->cmsManager->delete($entity);
     }
 
-    /**
-     * @param CmsPage $entity
-     */
-    protected function saveAfterUpdateAction($entity)
+    protected function saveAfterUpdateAction(CmsPage $entity): void
     {
         $this->cmsManager->save($entity);
     }

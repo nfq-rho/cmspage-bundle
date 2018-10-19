@@ -4,8 +4,8 @@
     {{ form_row(form.identifier) }}
 {% endif %}
 
-{% if form.name is defined %}
-    {{ form_row(form.name) }}
+{% if form.title is defined %}
+    {{ form_row(form.title) }}
 {% endif %}
 
 {% if form.slug is defined %}
@@ -68,5 +68,6 @@
 {% endif %}
 
 {% if form.extra is defined and form.extra.children|length > 0 %}
+    <hr />
     {{ form_widget(form.extra) }}
 {% endif %}

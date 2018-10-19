@@ -88,7 +88,6 @@ class CmsTypeManager implements ContainerAwareInterface
     private function resolveConfig(array $configuredTypes): void
     {
         foreach ($configuredTypes as $name => $options) {
-
             $class = $this->resolveAdapterClass($name, $options);
 
             /** @var CmsPageAdapterInterface $adapter */

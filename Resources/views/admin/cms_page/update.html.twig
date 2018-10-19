@@ -1,15 +1,10 @@
 {% trans_default_domain 'adminInterface' %}
-{% set main_menu = 'cmspages' %}
 {% set width = '70%' %}
 {% extends app.request.query.get('isModal')|default(false) ? '@NfqAdmin/modal.html.twig' : '@NfqAdmin/base/index.html.twig' %}
 
 {% block page_box_header %}
-    {% set entityName = entity.identifier %}
-    {% if entity.name is not empty %}
-        {% set entityName = entity.name %}
-    {% endif %}
-
-    #{{ entity.id }}: {{ entityName }} - {{ 'admin.cms.cmspage_edit'|trans }}
+    {% set entityTitle = entity.title|default(entity.identifier) %}
+    {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%title%': entityTitle}) }}
 {% endblock %}
 
 {% block page_box_body %}

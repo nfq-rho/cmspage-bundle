@@ -1,9 +1,12 @@
+{% trans_default_domain 'adminInterface' %}
 {% set featuredImage = '' %}
 {% if form.vars.value.image is not empty %}
     {% set featuredImage = cms_image_src(form.vars.value) %}
 {% endif %}
-<img src="{{ featuredImage }}" alt="{{ 'admin.cms.image.preview_notice'|trans }}" class="img-thumbnail" data-src="holder.js/100%x200/text:{{ 'admin.cms.image.preview_notice'|trans }}"/>
-<br /><br />
+<img {% if featuredImage is not empty %}src="{{ featuredImage }}"{% endif %}
+     alt="{{ 'admin.cms.image.preview_notice'|trans }}" class="img-thumbnail"
+     data-src="holder.js/100px200?text={{ 'admin.cms.image.preview_notice'|trans }}"/>
+<br/><br/>
 
 {% if form.file is defined %}
     {{ form_row(form.file) }}

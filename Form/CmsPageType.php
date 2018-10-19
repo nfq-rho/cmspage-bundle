@@ -33,8 +33,8 @@ class CmsPageType extends TranslatableType
             ->add('isActive', CheckboxType::class, [
                 'required' => false
             ])
-            ->add('identifier')
-            ->add('name')
+            ->add('identifier', TextType::class)
+            ->add('title', TextType::class)
             ->add('metaTitle', TextType::class, [
                 'required' => false,
             ])
@@ -49,7 +49,6 @@ class CmsPageType extends TranslatableType
                 'required' => false
             ])
             ->add('extra', CmsPageExtraType::class, [
-                'mapped' => false,
                 'label' => false,
                 'allow_extra_fields' => true,
             ])
@@ -74,7 +73,7 @@ class CmsPageType extends TranslatableType
             }
     }
 
-    public function callSetDefaultOptions(OptionsResolver $resolver): void
+    public function callConfigureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setRequired(['places'])
@@ -82,10 +81,5 @@ class CmsPageType extends TranslatableType
             ->setDefaults([
                 'data_class' => CmsPage::class,
             ]);
-    }
-
-    public function getName(): string
-    {
-        return 'cmspage';
     }
 }

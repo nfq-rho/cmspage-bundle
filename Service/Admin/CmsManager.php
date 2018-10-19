@@ -19,6 +19,7 @@ use Nfq\CmsPageBundle\Repository\CmsPageRepository;
 /**
  * Class CmsManager
  * @package Nfq\CmsPageBundle\Service\Admin
+ * @property CmsPageRepository $repository
  */
 class CmsManager extends AbstractAdminManager
 {

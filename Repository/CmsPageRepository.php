@@ -84,23 +84,6 @@ class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRep
             ->findTranslations($cmsPage);
     }
 
-    public function getTranslatableQueryByCriteriaSorted(
-        array $criteria,
-        ?string $locale,
-        bool $fallback = true,
-        string $sortOrder = 'ASC'
-    ) {
-        $qb = $this->getQueryBuilder();
-        $this->addArrayCriteria($qb, $criteria);
-        $qb->orderBy('cms.sortPosition', $sortOrder);
-
-        $query = $qb->getQuery();
-
-        $this->setTranslatableHints($query, $locale, $fallback);
-
-        return $query;
-    }
-
     public function getAlias(): string
     {
         return 'cms';

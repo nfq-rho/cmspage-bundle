@@ -22,11 +22,12 @@ use Nfq\AdminBundle\PlaceManager\Validator\Constraints as NfqPlaceAssert;
  * CmsPage
  *
  * @ORM\Table(name="cmspage", indexes={
- *      @ORM\Index(name="type_idx", columns={"content_type"})
+ *      @ORM\Index(name="type_idx", columns={"content_type"}),
+ *      @ORM\Index(name="sort_position_idx", columns={"sort_position"}),
  * })
  * @ORM\Entity(repositoryClass="Nfq\CmsPageBundle\Repository\CmsPageRepository")
- * @UniqueEntity(fields={"slug"}, message="cmspage.errors.field_not_unique")
- * @UniqueEntity(fields={"identifier"}, message="cmspage.errors.field_not_unique")
+ * @UniqueEntity(fields={"slug"}, message="admin.cmspage.errors.field_not_unique")
+ * @UniqueEntity(fields={"identifier"}, message="admin.cmspage.errors.field_not_unique")
  * @Gedmo\TranslationEntity(class="Nfq\CmsPageBundle\Entity\CmsPageTranslation")
  */
 class CmsPage
@@ -71,38 +72,44 @@ class CmsPage
     protected $metaDescription;
 
     /**
-     * @var string
+     * @var bool
      *
-     * @ORM\Column(name="active", type="boolean", options={"default":0}, nullable=true)
+     * @ORM\Column(type="boolean", options={"default":0})
      */
     protected $isActive;
+
+    /**
+     * @var array
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $extra;
 
     /**
      * @var string
      *
      * @Gedmo\Translatable
-     * @ORM\Column(name="place_name", type="string", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      */
-    protected $placeName;
+    protected $placeTitleOverwrite;
 
     /**
-     * @var array $places
-     * @NfqPlaceAssert\HasEmptySlots(manager="nfq_cmspage.service.place_manager")
-     * @ORM\Column(name="place", type="simple_array", nullable=true)
+     * @var string[]
+     * @NfqPlaceAssert\HasEmptySlots(manager="Nfq\CmsPageBundle\Service\CmsPlaceManager")
+     * @ORM\Column(type="json", nullable=true)
      */
     private $places;
 
     /**
-     * @var string
+     * @var bool
      *
-     * @ORM\Column(name="public", type="boolean")
+     * @ORM\Column(type="boolean")
      */
     private $isPublic;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="identifier", type="string", length=50, unique=true, options={"fixed":true})
+     * @ORM\Column(type="string", length=50, unique=true, options={"fixed":true})
      */
     protected $identifier;
 
@@ -110,15 +117,15 @@ class CmsPage
      * @var string
      *
      * @Gedmo\Translatable
-     * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    protected $name;
+    protected $title;
 
     /**
      * @var string
      *
      * @Gedmo\Translatable
-     * @ORM\Column(name="text", type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $text;
 
@@ -127,7 +134,7 @@ class CmsPage
      *
      * @Gedmo\Translatable
      * @Gedmo\Slug(fields={"name"}, unique=true)
-     * @ORM\Column(name="slug", type="string", length=128, unique=true, nullable=true)
+     * @ORM\Column(type="string", length=128, unique=true, nullable=true)
      */
     protected $slug;
 
@@ -141,7 +148,7 @@ class CmsPage
      * @var string
      *
      * @Gedmo\Translatable
-     * @ORM\Column(name="image", type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $image;
 
@@ -149,7 +156,7 @@ class CmsPage
      * @var string
      *
      * @Gedmo\Translatable
-     * @ORM\Column(name="image_alt", type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $imageAlt;
 
@@ -163,10 +170,17 @@ class CmsPage
     private $locale;
 
     /**
-     * @var integer
-     * @ORM\Column(name="sort_position", type="integer")
+     * @var int
+     * @ORM\Column(type="integer")
      */
     private $sortPosition = 0;
+
+    public function __construct()
+    {
+        $this->isActive = false;
+        $this->extra = [];
+        $this->places = [];
+    }
 
     /**
      * Get id
@@ -181,32 +195,28 @@ class CmsPage
     /**
      * @return string
      */
-    public function getPlaceName()
+    public function getPlaceTitleOverwrite()
     {
-        return $this->placeName;
+        return $this->placeTitleOverwrite;
     }
 
     /**
-     * @param string $placeName
+     * @param string $placeTitleOverwrite
      */
-    public function setPlaceName($placeName)
+    public function setPlaceTitleOverwrite($placeTitleOverwrite)
     {
-        $this->placeName = $placeName;
+        $this->placeTitleOverwrite = $placeTitleOverwrite;
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getPlaces()
+    public function getPlaces(): array
     {
         return $this->places;
     }
 
-    /**
-     * @param array $places
-     * @return $this
-     */
-    public function setPlaces($places)
+    public function setPlaces(array $places): self
     {
         $this->places = $places;
         return $this;
@@ -220,22 +230,18 @@ class CmsPage
         return $this->contentType;
     }
 
-    /**
-     * @param mixed $contentType
-     */
-    public function setContentType($contentType)
+    public function setContentType(string $contentType): self
     {
         $this->contentType = $contentType;
+
+        return $this;
     }
 
-    /**
-     * Set identifier
-     *
-     * @param $identifier
-     */
-    public function setIdentifier($identifier)
+    public function setIdentifier(string $identifier): self
     {
         $this->identifier = $identifier;
+
+        return $this;
     }
 
     /**
@@ -248,14 +254,11 @@ class CmsPage
         return $this->identifier;
     }
 
-    /**
-     * Set name
-     *
-     * @param mixed $name
-     */
-    public function setName($name)
+    public function setTitle($title): self
     {
-        $this->name = $name;
+        $this->title = $title;
+
+        return $this;
     }
 
     /**
@@ -263,9 +266,9 @@ class CmsPage
      *
      * @return mixed
      */
-    public function getName()
+    public function getTitle()
     {
-        return $this->name;
+        return $this->title;
     }
 
     /**
@@ -288,14 +291,11 @@ class CmsPage
         $this->text = $text;
     }
 
-    /**
-     * Set slug
-     *
-     * @param mixed $slug
-     */
-    public function setSlug($slug)
+    public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
     }
 
     /**
@@ -318,13 +318,7 @@ class CmsPage
         return $this->file;
     }
 
-    /**
-     * Set file
-     *
-     * @param UploadedFile $file
-     * @return $this
-     */
-    public function setFile(UploadedFile $file)
+    public function setFile(UploadedFile $file): self
     {
         if (isset($this->image)) {
             $this->tempImage = $this->image;
@@ -356,54 +350,26 @@ class CmsPage
         return $this->image;
     }
 
-    /**
-     * @param mixed $image
-     * @return $this
-     */
-    public function setImage($image)
+    public function setImage(string $image): self
     {
         $this->image = $image;
 
         return $this;
     }
 
-    /**
-     * Set isActive
-     *
-     * @param boolean $isActive
-     * @return $this
-     */
-    public function setIsActive($isActive)
+    public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
 
         return $this;
     }
 
-    /**
-     * Get isActive
-     *
-     * @return boolean
-     */
-    public function getIsActive()
+    public function isActive(): bool
     {
         return $this->isActive;
     }
 
-    /**
-     * Is Active
-     *
-     * @return bool
-     */
-    public function isActive()
-    {
-        return $this->getIsActive();
-    }
-
-    /**
-     * @param $locale
-     */
-    public function setLocale($locale)
+    public function setLocale(string $locale): void
     {
         $this->locale = $locale;
     }
@@ -416,14 +382,7 @@ class CmsPage
         return $this->locale;
     }
 
-    /**
-     * Set metaDescription
-     *
-     * @param string $metaDescription
-     *
-     * @return $this
-     */
-    public function setMetaDescription($metaDescription)
+    public function setMetaDescription(string $metaDescription): self
     {
         $this->metaDescription = $metaDescription;
 
@@ -440,14 +399,7 @@ class CmsPage
         return $this->metaDescription;
     }
 
-    /**
-     * Set title
-     *
-     * @param string $metaTitle
-     *
-     * @return $this
-     */
-    public function setMetaTitle($metaTitle)
+    public function setMetaTitle(string $metaTitle): self
     {
         $this->metaTitle = $metaTitle;
 
@@ -464,20 +416,12 @@ class CmsPage
         return $this->metaTitle;
     }
 
-    /**
-     * @return string
-     */
-    public function getIsPublic()
+    public function getIsPublic(): bool
     {
         return $this->isPublic;
     }
 
-    /**
-     * @param string $isPublic
-     *
-     * @return $this
-     */
-    public function setIsPublic($isPublic)
+    public function setIsPublic(bool $isPublic): self
     {
         $this->isPublic = $isPublic;
 
@@ -492,33 +436,33 @@ class CmsPage
         return $this->imageAlt;
     }
 
-    /**
-     * @param string $imageAlt
-     *
-     * @return CmsPage
-     */
-    public function setImageAlt($imageAlt)
+    public function setImageAlt(string $imageAlt): self
     {
         $this->imageAlt = $imageAlt;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getSortPosition()
+    public function getSortPosition(): int
     {
         return $this->sortPosition;
     }
 
-    /**
-     * @param int $sortPosition
-     * @return CmsPage
-     */
-    public function setSortPosition($sortPosition)
+    public function setSortPosition(int $sortPosition): self
     {
         $this->sortPosition = $sortPosition;
+
+        return $this;
+    }
+
+    public function getExtra(): array
+    {
+        return $this->extra;
+    }
+
+    public function setExtra(array $extra): self
+    {
+        $this->extra = $extra;
 
         return $this;
     }
