@@ -14,5 +14,5 @@
 {% endblock %}
 
 {% block page_box_footer_actions %}
-    {{ form(delete_form) }}
+    {% include 'NfqAdminBundle:_form:_form_delete.html.twig' with {'form': delete_form} only %}
 {% endblock %}
