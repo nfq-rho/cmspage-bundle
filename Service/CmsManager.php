@@ -81,13 +81,9 @@ class CmsManager
     }
 
     /**
-     * @param string $criteria
-     * @param string|null $locale
-     * @param bool $silent
-     * @return CmsPage
      * @throws \Exception
      */
-    public function getCmsPage(string $criteria, string $locale = null, $silent = false)
+    public function getCmsPage(string $criteria, ?string $locale = null, bool $silent = false): CmsPage
     {
         $entity = null;
 

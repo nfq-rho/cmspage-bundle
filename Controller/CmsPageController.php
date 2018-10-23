@@ -14,10 +14,9 @@ namespace Nfq\CmsPageBundle\Controller;
 use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\CmsPageBundle\Service\CmsManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Class CmsPageController
@@ -25,27 +24,22 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class CmsPageController extends Controller
 {
-    /**
-     * @var CmsManager
-     */
-    private $cmsManager;
-
-    public function __construct(CmsManager $cmsManager)
-    {
-        $this->cmsManager = $cmsManager;
-    }
-
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $defaultTemplate = '@NfqCmsPage/cms_page/view.html.twig';
 
-    /**
-     * @param Request $request
-     * @param string $slug
-     * @return Response
-     */
-    public function viewAction(Request $request, $slug)
+    /** @var CmsManager */
+    private $cmsManager;
+
+    /** @var EngineInterface */
+    private $templating;
+
+    public function __construct(CmsManager $cmsManager, EngineInterface $templating)
+    {
+        $this->cmsManager = $cmsManager;
+        $this->templating = $templating;
+    }
+
+    public function viewAction(Request $request, string $slug): Response
     {
         try {
             $entity = $this->cmsManager->getCmsPage($slug);
@@ -60,44 +54,30 @@ class CmsPageController extends Controller
             return $this->render(
                 $this->resolvePageTemplate($entity),
                 $responseParams
-                );
+            );
         } catch (\Exception $e) {
-            throw new NotFoundHttpException($e->getMessage(), $e);
+            throw $this->createNotFoundException($e->getMessage(), $e);
         }
     }
 
-    /**
-     * Returns true if this is a sub-request
-     * @return bool
-     */
-    protected function isSubRequest()
+    protected function isSubRequest(): bool
     {
         return null !== $this->get('request_stack')->getParentRequest();
     }
 
     /**
      * This method can be used in order to append more parameters to response.
-     *
-     * @param Request $request
-     * @param CmsPage $entity
-     * @param array $responseParams
      */
-    protected function appendResponseParameters(Request $request, $entity, array &$responseParams)
+    protected function appendResponseParameters(Request $request, CmsPage $entity, array &$responseParams): void
     {
     }
 
-    /**
-     * @param CmsPage $entity
-     * @return string
-     */
-    protected function resolvePageTemplate(CmsPage $entity)
+    protected function resolvePageTemplate(CmsPage $entity): string
     {
-        $twigTemplateLoader = $this->get('twig.loader');
-
         $customTemplate = sprintf('@NfqCmsPage/cms_page/_custom:%s.html.twig', $entity->getIdentifier());
         $finalTemplate = $this->defaultTemplate;
 
-        if ($twigTemplateLoader->exists($customTemplate)) {
+        if ($this->templating->exists($customTemplate)) {
             $finalTemplate = $customTemplate;
         }
 

@@ -27,8 +27,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CmsPageType extends TranslatableType
 {
-    public function callBuildForm(FormBuilderInterface $builder, array $options): void
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder
             ->add('isActive', CheckboxType::class, [
                 'required' => false
@@ -73,8 +75,10 @@ class CmsPageType extends TranslatableType
             }
     }
 
-    public function callConfigureOptions(OptionsResolver $resolver): void
+    public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $resolver
             ->setRequired(['places'])
             ->setAllowedTypes('places', 'array')

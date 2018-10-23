@@ -12,8 +12,6 @@
 namespace Nfq\CmsPageBundle\Form;
 
 use Nfq\AdminBundle\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class CmsPageExtraType
@@ -21,11 +19,5 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CmsPageExtraType extends AbstractType
 {
-    public function callBuildForm(FormBuilderInterface $builder, array $options): void
-    {
-    }
 
-    public function callConfigureOptions(OptionsResolver $resolver): void
-    {
-    }
 }

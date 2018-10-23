@@ -21,6 +21,14 @@ use Nfq\AdminBundle\Menu\AdminMenuListener as AdminMenuListenerBase;
  */
 class AdminMenuListener extends AdminMenuListenerBase
 {
+    private const CMS_ROUTES = [
+        'nfq_cmspage_list',
+        'nfq_cmspage_new',
+        'nfq_cmspage_create',
+        'nfq_cmspage_update',
+        'nfq_cmspage_delete',
+    ];
+
     protected function doMenuConfigure(ConfigureMenuEvent $event): void
     {
         $menu = $event->getMenu();
@@ -33,18 +41,14 @@ class AdminMenuListener extends AdminMenuListenerBase
     {
         return $this
             ->getFactory()
-            ->createItem('admin.side_menu.cms_pages', ['route' => 'nfq_cmspage_list'])
+            ->createItem('admin.side_menu.cms_pages', ['route' => self::CMS_ROUTES[0]])
+            ->setLabelAttributes([
+                'icon' => 'fa fa-newspaper',
+            ])
             ->setExtras(
                 [
-                    'label-icon' => 'fa fa-newspaper',
                     'translation_domain' => 'adminInterface',
-                    'routes' => [
-                        'nfq_cmspage_list',
-                        'nfq_cmspage_new',
-                        'nfq_cmspage_create',
-                        'nfq_cmspage_update',
-                        'nfq_cmspage_delete',
-                    ]
+                    'routes' => self::CMS_ROUTES
                 ]
             );
     }
