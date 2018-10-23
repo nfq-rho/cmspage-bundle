@@ -122,9 +122,6 @@ class CmsPageController extends Controller
         return $this->cmsManager->getEditableEntity($id, $locale);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getIndexActionResults(Request $request)
     {
         return $this->cmsManager->getResults($request);
@@ -149,9 +146,6 @@ class CmsPageController extends Controller
         return $this->redirect($this->generateUrl('nfq_cmspage_list', $redirectParams->all()));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getCreateFormAndEntity(string $locale): array
     {
         $formType = get_class($this->adapter->getFormTypeInstance());
@@ -206,9 +200,6 @@ class CmsPageController extends Controller
         return [$formBuilder->getForm(), $deleteForm];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getDeleteForm($id): FormInterface
     {
         $uri = $this->generateUrl('nfq_cmspage_delete', ['id' => $id]);
