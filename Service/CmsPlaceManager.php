@@ -23,7 +23,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class CmsPlaceManager
  * @package Nfq\CmsPageBundle\Service
  */
-class CmsPlaceManager extends PlaceManager implements PlaceManagerInterface
+class CmsPlaceManager extends PlaceManager
 {
     /** @var EntityManagerInterface */
     private $em;
