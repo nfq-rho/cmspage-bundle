@@ -52,7 +52,7 @@ class CmsManager
      * @param bool $raw
      * @return array
      */
-    public function getCmsUrlParams($target, $locale, $raw = false)
+    public function getCmsUrlParams($target, $locale, $raw = false): array
     {
         try {
             $entity = $target instanceof CmsPage ? $target : $this->getCmsPageByIdentifier($target, $locale);

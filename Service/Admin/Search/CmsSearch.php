@@ -15,13 +15,12 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Nfq\AdminBundle\Service\Generic\Search\GenericSearch;
-use Nfq\AdminBundle\Service\Generic\Search\GenericSearchInterface;
 
 /**
  * Class CmsSearch
  * @package Nfq\CmsPageBundle\Service\Admin\Search
  */
-class CmsSearch extends GenericSearch implements GenericSearchInterface
+class CmsSearch extends GenericSearch
 {
     protected function extendQuery(Request $request, QueryBuilder $queryBuilder): void
     {
@@ -36,7 +35,7 @@ class CmsSearch extends GenericSearch implements GenericSearchInterface
         }
 
         $active = $request->query->get('active');
-        if (!is_null($active) && (int)$active > -1) {
+        if (null !== $active && (int)$active > -1) {
             $queryBuilder->andWhere('search.isActive = :active');
             $queryBuilder->setParameter('active', $active);
         }

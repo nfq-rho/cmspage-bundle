@@ -43,7 +43,7 @@ class NfqCmsPageExtension extends Extension
         $uploadDir = ltrim($config['upload_dir'], DIRECTORY_SEPARATOR);
 
         $_config = [
-            'upload_absolute' => $container->getParameter('kernel.root_dir') . '/../web/' . $uploadDir ,
+            'upload_absolute' => $container->getParameter('kernel.project_dir') . '/public/' . $uploadDir ,
             'upload_relative' => $uploadDir,
         ];
 

@@ -3,10 +3,9 @@ admin:
         cms_pages: CMS Pages
 
     cms:
-        cmspage_edit_title: '#%id% - %title% - Edit'
         cmspage_new: New %cms_type%
         cmspage_code:  Code
-        cmspage_active: Active
+        cmspage_edit_title: '#%id% - %title% - Edit %cms_type%'
         cmspage_remove: '#%id% - %identifier% - Confirm removal?'
         cmspage_remove_text: Do you want to delete this CMS page?
         cmspage_nopages: No CMS pages are created yet
@@ -26,7 +25,7 @@ admin:
             isActive: Active
             contentType: Type
             identifier: Identifier
-            title: Page title
+            title: Title
             text: Text
             slug: URL slug
             image: Image

@@ -11,12 +11,7 @@
 
 namespace Nfq\CmsPageBundle\Service\Admin;
 
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\Query;
-use Mapping\Fixture\Xml\Uploadable;
 use Nfq\CmsPageBundle\Entity\CmsPage;
-use Nfq\CmsPageBundle\Entity\CmsPageRepository;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -50,8 +45,6 @@ class CmsUploadManager
         $uploadDir = $this->getUploadPath($entity->getId());
 
         $entity->getFile()->move($uploadDir, $entity->getImage());
-
-        $this->file = null;
     }
 
     public function removeFile(int $id, string $tempImage, string $locale): void
@@ -68,11 +61,11 @@ class CmsUploadManager
         }
     }
 
-    public function removeFiles($entityId)
+    public function removeFiles($entityId): void
     {
         $filesDir = $this->getUploadPath($entityId);
 
-        if (is_dir($filesDir)) {
+        if (!is_dir($filesDir)) {
             $it = new \DirectoryIterator($filesDir);
             foreach($it as $file) {
                 if ($file->isDot()) {
@@ -97,7 +90,9 @@ class CmsUploadManager
     {
         if ($entity instanceof CmsPage && $entity->getImage()) {
             return $this->getWebPath($entity->getId(), $entity->getImage()) ;
-        } elseif (is_array($entity)) {
+        }
+
+        if (\is_array($entity)) {
             return $this->getWebPath($entity['id'], $entity['image']);
         }
 
@@ -106,15 +101,11 @@ class CmsUploadManager
 
     private function getWebPath($id, string $image = ''): string
     {
-        $_id = md5($id);
-
-        return DIRECTORY_SEPARATOR . $this->config['upload_relative'] . $_id . DIRECTORY_SEPARATOR . $image;
+        return DIRECTORY_SEPARATOR . $this->config['upload_relative'] . md5((string)$id) . DIRECTORY_SEPARATOR . $image;
     }
     
     private function getUploadPath($id, string $image = ''): string
     {
-        $_id = md5($id);
-
-        return $this->config['upload_absolute'] . $_id . DIRECTORY_SEPARATOR . $image;
+        return $this->config['upload_absolute'] . md5((string)$id) . DIRECTORY_SEPARATOR . $image;
     }
 }

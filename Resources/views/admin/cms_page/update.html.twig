@@ -1,10 +1,13 @@
 {% trans_default_domain 'adminInterface' %}
-{% set width = '70%' %}
-{% extends app.request.query.get('isModal')|default(false) ? '@NfqAdmin/modal.html.twig' : '@NfqAdmin/base/index.html.twig' %}
+{% set cmsType = ('admin.cms.labels.adapter_' ~ app.request.query.get('_type'))|trans %}
+{% extends '@NfqCmsPage/admin/cms_page/create.html.twig' %}
+
+{% block page_title %}
+    {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%title%': entity.title, '%cms_type%': cmsType})  }}
+{% endblock %}
 
 {% block page_box_header %}
-    {% set entityTitle = entity.title|default(entity.identifier) %}
-    {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%title%': entityTitle}) }}
+   {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%title%': entity.title, '%cms_type%': cmsType})  }}
 {% endblock %}
 
 {% block page_box_body %}

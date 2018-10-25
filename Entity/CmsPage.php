@@ -308,19 +308,14 @@ class CmsPage
         return $this->slug;
     }
 
-    /**
-     * Get file.
-     *
-     * @return UploadedFile
-     */
-    public function getFile()
+    public function getFile(): ?UploadedFile
     {
         return $this->file;
     }
 
     public function setFile(UploadedFile $file): self
     {
-        if (isset($this->image)) {
+        if (null !== $this->image) {
             $this->tempImage = $this->image;
         }
 
@@ -329,7 +324,7 @@ class CmsPage
         return $this;
     }
 
-    public function resetTempFile()
+    public function resetTempFile(): void
     {
         $this->tempImage = null;
     }

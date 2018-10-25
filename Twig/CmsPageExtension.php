@@ -130,8 +130,8 @@ class CmsPageExtension extends \Twig_Extension
 
             $value = $propAccessor->getValue($cmsPage, $field);
 
-            if ($field == 'text' && $raw) {
-                $value = str_replace(['<p>', '</p>'], ['', ''], $value);
+            if ($field === 'text' && $raw) {
+                $value = str_replace(['<p>', '</p>'], '', $value);
             }
         } catch (\Exception $ex) {
             //Cms page was not found so just return empty string

@@ -10,7 +10,7 @@
         {% set delete_form = formGroup.delete %}
     {% endif %}
 
-    <div class="tab-pane {% if isActiveLocale(_context, locale) %}active{% endif %}" id="{{ locale }}-tab">
+    <div class="tab-pane fade in {% if isActiveLocale(_context, locale) %}active{% endif %}" id="{{ locale }}-tab">
         {% embed '@NfqAdmin/_form/_form_theme.html.twig' %}{% endembed %}
 
         {% include '@NfqAdmin/_form/_form_delete.html.twig' with {'form': delete_form|default(false)} only %}

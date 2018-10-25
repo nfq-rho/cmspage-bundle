@@ -11,21 +11,20 @@
 
 namespace Nfq\CmsPageBundle\Controller\Admin;
 
-use Nfq\AdminBundle\PlaceManager\PlaceManagerInterface;
-use Nfq\AdminBundle\Service\FormManager;
 use Nfq\AdminBundle\Controller\Traits\CrudIndexController;
 use Nfq\AdminBundle\Controller\Traits\TranslatableCRUDController;
+use Nfq\AdminBundle\PlaceManager\PlaceManagerInterface;
+use Nfq\AdminBundle\Service\FormManager;
 use Nfq\CmsPageBundle\Entity\CmsPage;
-use Nfq\CmsPageBundle\Service\CmsTypeManager;
-use Nfq\CmsPageBundle\Service\Admin\CmsManager;
 use Nfq\CmsPageBundle\Service\Adapters\CmsPageAdapterInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Nfq\CmsPageBundle\Service\Admin\CmsManager;
+use Nfq\CmsPageBundle\Service\CmsManager as CmsManagerFront;
+use Nfq\CmsPageBundle\Service\CmsTypeManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class CmsPageController
@@ -48,6 +47,9 @@ class CmsPageController extends Controller
     /** @var CmsManager */
     private $cmsManager;
 
+    /** @var CmsManagerFront */
+    private $cmsManagerFront;
+
     /** @var CmsTypeManager */
     private $cmsTypeManager;
 
@@ -56,10 +58,12 @@ class CmsPageController extends Controller
 
     public function __construct(
         CmsManager $cmsManager,
+        CmsManagerFront $cmsManagerFront,
         CmsTypeManager $cmsTypeManager,
         PlaceManagerInterface $placeManager
     ) {
         $this->cmsManager = $cmsManager;
+        $this->cmsManagerFront = $cmsManagerFront;
         $this->cmsTypeManager = $cmsTypeManager;
         $this->placeManager = $placeManager;
     }
@@ -129,8 +133,7 @@ class CmsPageController extends Controller
 
     protected function redirectToPreview(CmsPage $entity): RedirectResponse
     {
-        $params = $this->get(CmsManager::class)
-            ->getCmsUrlParams($entity->getIdentifier(), $entity->getLocale());
+        $params = $this->cmsManagerFront->getCmsUrlParams($entity->getIdentifier(), $entity->getLocale());
 
         $params['_locale'] = $entity->getLocale();
 
@@ -148,7 +151,7 @@ class CmsPageController extends Controller
 
     protected function getCreateFormAndEntity(string $locale): array
     {
-        $formType = get_class($this->adapter->getFormTypeInstance());
+        $formType = \get_class($this->adapter->getFormTypeInstance());
         $entity = $this->adapter->getEntityInstance();
         $entity->setLocale($locale);
 
@@ -159,7 +162,7 @@ class CmsPageController extends Controller
             'places' => $this->placeManager->getPlaceChoices(),
         ];
 
-        $submit = ($entity->getIsPublic())
+        $submit = $entity->getIsPublic()
             ? FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE | FormManager::SUBMIT_PREVIEW
             : FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE;
 
@@ -174,7 +177,7 @@ class CmsPageController extends Controller
 
     protected function getEditDeleteForms(CmsPage $entity): array
     {
-        $formType = get_class($this->adapter->getFormTypeInstance());
+        $formType = \get_class($this->adapter->getFormTypeInstance());
 
         $id = $entity->getId();
 
@@ -185,7 +188,7 @@ class CmsPageController extends Controller
 
         $uri = $this->generateUrl('nfq_cmspage_update', ['id' => $id, '_type' => $this->adapter->getType()]);
 
-        $submit = ($entity->getIsPublic())
+        $submit = $entity->getIsPublic()
             ? FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE | FormManager::SUBMIT_PREVIEW
             : FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE;
 

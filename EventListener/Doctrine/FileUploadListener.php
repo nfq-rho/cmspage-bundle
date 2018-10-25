@@ -22,85 +22,52 @@ use Nfq\CmsPageBundle\Service\Admin\CmsUploadManager;
  */
 class FileUploadListener
 {
-    /**
-     * @var CmsUploadManager
-     */
+    /** @var CmsUploadManager */
     private $uploadManager;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $entityId;
 
-    /**
-     * @param CmsUploadManager $uploadManager
-     */
     public function __construct(CmsUploadManager $uploadManager)
     {
         $this->uploadManager = $uploadManager;
     }
 
-    /**
-     * @param CmsPage $entity
-     * @param LifecycleEventArgs $event
-     */
-    public function postPersist(CmsPage $entity, LifecycleEventArgs $event)
+    public function postPersist(CmsPage $entity, LifecycleEventArgs $event): void
     {
         $this->uploadManager->upload($entity);
     }
 
-    /**
-     * @param CmsPage $entity
-     * @param LifecycleEventArgs $event
-     */
-    public function postUpdate(CmsPage $entity, LifecycleEventArgs $event)
+    public function postUpdate(CmsPage $entity, LifecycleEventArgs $event): void
     {
         $this->uploadManager->upload($entity);
     }
 
-    /**
-     * @param CmsPage $entity
-     * @param PreFlushEventArgs $event
-     */
-    public function preFlush(CmsPage $entity, PreFlushEventArgs $event)
+    public function preFlush(CmsPage $entity, PreFlushEventArgs $event): void
     {
         $this->setImage($entity);
         $this->removeExistingImage($entity);
     }
 
-    /**
-     * @param CmsPage $entity
-     * @param LifecycleEventArgs $event
-     */
-    public function preRemove(CmsPage $entity, LifecycleEventArgs $event)
+    public function preRemove(CmsPage $entity, LifecycleEventArgs $event): void
     {
         $this->entityId = $entity->getId();
     }
 
-    /**
-     * @param CmsPage $entity
-     * @param LifecycleEventArgs $event
-     */
-    public function postRemove(CmsPage $entity, LifecycleEventArgs $event)
+    public function postRemove(CmsPage $entity, LifecycleEventArgs $event): void
     {
         $this->uploadManager->removeFiles($this->entityId);
     }
 
-    /**
-     * @param CmsPage $entity
-     */
-    private function setImage(CmsPage $entity)
+    private function setImage(CmsPage $entity): void
     {
-        if (null !== $entity->getFile()) {
-            $filename = sha1(uniqid(mt_rand(), true)) . '_' . crc32($entity->getLocale());
-            $entity->setImage($filename . '.' . $entity->getFile()->guessExtension());
+        if (null !== $uploadedFile = $entity->getFile()) {
+            $filename = sha1(uniqid((string)mt_rand(), true)) . '_' . crc32($entity->getLocale());
+            $entity->setImage($filename . '.' . $uploadedFile->guessExtension());
         }
     }
 
-    /**
-     * @param CmsPage $entity
-     */
-    private function removeExistingImage(CmsPage $entity)
+    private function removeExistingImage(CmsPage $entity): void
     {
         if (null !== $entity->getTempFile()) {
             $this->uploadManager->removeFile($entity->getId(), $entity->getTempFile(), $entity->getLocale());
