@@ -52,7 +52,7 @@ class CmsManager extends AbstractAdminManager
         return parent::save($entity, $beforeEventName, $afterEventName);
     }
 
-    public function getEditableEntity($id, ?string $locale): CmsPage
+    public function getEditableEntity($id, ?string $locale): ?CmsPage
     {
         return $this->repository->getEditableEntity($id, $locale);
     }

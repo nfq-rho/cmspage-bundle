@@ -11,8 +11,8 @@
 
 namespace Nfq\CmsPageBundle\Controller\Admin;
 
-use Nfq\AdminBundle\Controller\Traits\CrudIndexController;
-use Nfq\AdminBundle\Controller\Traits\TranslatableCRUDController;
+use Nfq\AdminBundle\Controller\Traits\ListControllerTrait;
+use Nfq\AdminBundle\Controller\Traits\TranslatableCrudControllerTrait;
 use Nfq\AdminBundle\PlaceManager\PlaceManagerInterface;
 use Nfq\AdminBundle\Service\FormManager;
 use Nfq\CmsPageBundle\Entity\CmsPage;
@@ -32,12 +32,12 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CmsPageController extends Controller
 {
-    use TranslatableCRUDController {
+    use TranslatableCrudControllerTrait {
         newAction as traitNewAction;
         createAction as traitCreateAction;
         updateAction as traitUpdateAction;
     }
-    use CrudIndexController {
+    use ListControllerTrait {
         indexAction as traitIndexAction;
     }
 
@@ -121,7 +121,7 @@ class CmsPageController extends Controller
         return $this->traitUpdateAction($request, $id);
     }
 
-    protected function getEditableEntityForLocale($id, string $locale = null)
+    protected function getEntityForLocale($id, string $locale = null): ?CmsPage
     {
         return $this->cmsManager->getEditableEntity($id, $locale);
     }
@@ -167,7 +167,7 @@ class CmsPageController extends Controller
             : FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE;
 
         $formBuilder = $this
-            ->getFormService()
+            ->getFormManager()
             ->getFormBuilder($uri, FormManager::CRUD_CREATE, $formType, $entity, $formOptions, $submit);
 
         $this->adapter->modifyForm($formBuilder);
@@ -193,7 +193,7 @@ class CmsPageController extends Controller
             : FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE;
 
         $formBuilder = $this
-            ->getFormService()
+            ->getFormManager()
             ->getFormBuilder($uri, FormManager::CRUD_UPDATE, $formType, $entity, $formOptions, $submit);
 
         $this->adapter->modifyForm($formBuilder);
@@ -207,7 +207,7 @@ class CmsPageController extends Controller
     {
         $uri = $this->generateUrl('nfq_cmspage_delete', ['id' => $id]);
 
-        return $this->getFormService()->getDeleteForm($uri);
+        return $this->getFormManager()->getDeleteForm($uri);
     }
 
     protected function insertAfterCreateAction(CmsPage $entity): void
