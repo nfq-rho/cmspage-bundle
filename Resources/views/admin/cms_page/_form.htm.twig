@@ -1,88 +1,71 @@
 {% trans_default_domain 'adminInterface' %}
-{% for locale, formGroup in forms %}
-    {% if  formGroup.edit is defined %}
-        {% set form = formGroup.edit %}
-    {% else %}
-        {% set form = formGroup %}
-    {% endif %}
 
-    {% if  formGroup.delete is defined %}
-        {% set delete_form = formGroup.delete %}
-    {% endif %}
+{% include '@NfqAdmin/_form/_form_delete.html.twig' with {'form': deleteForm|default(false)} only %}
 
-    <div class="tab-pane fade in {% if isActiveLocale(_context, locale) %}active{% endif %}" id="{{ locale }}-tab">
-        {% embed '@NfqAdmin/_form/_form_theme.html.twig' %}{% endembed %}
+{{ form_start(form) }}
 
-        {% include '@NfqAdmin/_form/_form_delete.html.twig' with {'form': delete_form|default(false)} only %}
+{% include '@NfqAdmin/_form/_form_submit.html.twig' with {'form': form} only %}
 
-        {{ form_start(form) }}
+<div class="row">
+    <div class="col-lg-8">
+        <div id="accordion-{{ locale }}" class="panel-group accordion-container">
+            {% block header_panels %}{% endblock %}
 
-        {% include '@NfqAdmin/_form/_form_submit.html.twig' with {'form': form} only %}
+            {% block main_information %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion-{{ locale }}"
+                               href="#main-information-{{ locale }}">
+                                {{ 'admin.cms.main_information'|trans }}
+                            </a>
+                        </h4>
+                    </div>
 
-        <div class="row">
-            <div class="col-lg-8">
-                <div id="accordion-{{ locale }}" class="panel-group accordion-container">
-                    {% block header_panels %}{% endblock %}
+                    <div id="main-information-{{ locale }}" class="panel-collapse in">
+                        <div class="panel-body">
+                            {% include '@NfqCmsPage/admin/cms_page/_blocks/main.html.twig' %}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
 
-                    {% block main_information %}
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion-{{ locale }}"
-                                       href="#main-information-{{ locale }}">
-                                        {{ 'admin.cms.main_information'|trans }}
-                                    </a>
-                                </h4>
-                            </div>
+            {% block place_settings %}
+                {% if form.places_config is defined %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion-{{ locale }}"
+                                   href="#place-settings-{{ locale }}">{{ 'admin.cms.place_settings'|trans }}</a>
+                            </h4>
+                        </div>
 
-                            <div id="main-information-{{ locale }}" class="panel-collapse in">
-                                <div class="panel-body">
-                                    {% include '@NfqCmsPage/admin/cms_page/_blocks/main.html.twig' %}
-                                </div>
+                        <div id="place-settings-{{ locale }}" class="panel-collapse collapse collapse">
+                            <div class="panel-body">
+                                {% include '@NfqCmsPage/admin/cms_page/_blocks/place.html.twig' %}
                             </div>
                         </div>
-                    {% endblock %}
+                    </div>
+                {% endif %}
+            {% endblock %}
 
-                    {% block place_settings %}
-                        {% if form.places_config is defined %}
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion-{{ locale }}"
-                                           href="#place-settings-{{ locale }}">{{ 'admin.cms.place_settings'|trans }}</a>
-                                    </h4>
-                                </div>
-
-                                <div id="place-settings-{{ locale }}" class="panel-collapse collapse collapse">
-                                    <div class="panel-body">
-                                        {% include '@NfqCmsPage/admin/cms_page/_blocks/place.html.twig' %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endblock %}
-
-                    {% block footer_panels %}{% endblock %}
-                </div>
-                <br/>
-            </div>
-            <div class="col-lg-4">
-                {% block featured_image %}
-                    {% include '@NfqCmsPage/admin/cms_page/_blocks/featured_image.html.twig' %}
-                {% endblock %}
-            </div>
+            {% block footer_panels %}{% endblock %}
         </div>
-
         <br/>
-
-        {% if form.text_mce is defined %}
-            <div class="col-lg-12">
-                <div class="form-group">
-                    {{ form_widget(form.text_mce) }}
-                </div>
-            </div>
-        {% endif %}
-
-        {{ form_end(form) }}
     </div>
-{% endfor %}
+    <div class="col-lg-4">
+        {% block featured_image %}
+            {% include '@NfqCmsPage/admin/cms_page/_blocks/featured_image.html.twig' %}
+        {% endblock %}
+    </div>
+</div>
+
+{% if form.text_mce is defined %}
+    <div class="col-lg-12">
+        <div class="form-group">
+            {{ form_widget(form.text_mce) }}
+        </div>
+    </div>
+{% endif %}
+
+{{ form_end(form) }}

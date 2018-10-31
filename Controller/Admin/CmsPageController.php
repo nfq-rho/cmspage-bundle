@@ -91,12 +91,15 @@ class CmsPageController extends Controller
     public function newAction(Request $request): array
     {
         $this->setAdapter($request);
-        return $this->traitNewAction($request);
+
+        return $this->traitNewAction();
     }
 
     private function setAdapter(Request $request): void
     {
-        $this->adapter = $this->getTypeManager()->getAdapterFromRequest($request);
+        if (null === $this->adapter) {
+            $this->adapter = $this->getTypeManager()->getAdapterFromRequest($request);
+        }
     }
 
     /**
@@ -107,6 +110,7 @@ class CmsPageController extends Controller
     public function createAction(Request $request)
     {
         $this->setAdapter($request);
+
         return $this->traitCreateAction($request);
     }
 
@@ -118,17 +122,18 @@ class CmsPageController extends Controller
     public function updateAction(Request $request, $id)
     {
         $this->setAdapter($request);
+
         return $this->traitUpdateAction($request, $id);
     }
 
     protected function getEntityForLocale($id, string $locale = null): ?CmsPage
     {
-        return $this->cmsManager->getEditableEntity($id, $locale);
+        return $this->cmsManager->getEntity($id, $locale);
     }
 
     protected function getIndexActionResults(Request $request)
     {
-        return $this->cmsManager->getResults($request);
+        return $this->cmsManager->getEntities($request);
     }
 
     protected function redirectToPreview(CmsPage $entity): RedirectResponse

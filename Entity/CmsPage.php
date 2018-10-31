@@ -13,14 +13,13 @@ namespace Nfq\CmsPageBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Nfq\AdminBundle\PlaceManager\Validator\Constraints as NfqPlaceAssert;
+use Nfq\AdminBundle\Translatable\Entity\TranslatableTrait;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
-use Nfq\AdminBundle\PlaceManager\Validator\Constraints as NfqPlaceAssert;
 
 /**
- * CmsPage
- *
  * @ORM\Table(name="cmspage", indexes={
  *      @ORM\Index(name="type_idx", columns={"content_type"}),
  *      @ORM\Index(name="sort_position_idx", columns={"sort_position"}),
@@ -32,6 +31,8 @@ use Nfq\AdminBundle\PlaceManager\Validator\Constraints as NfqPlaceAssert;
  */
 class CmsPage
 {
+    use TranslatableTrait;
+
     /**
      * Variable to temporarily store path to old file
      *
@@ -42,7 +43,7 @@ class CmsPage
     /**
      * @var integer
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -51,23 +52,23 @@ class CmsPage
     /**
      * @var string
      *
-     * @ORM\Column(name="content_type", type="string", length=32)
+     * @ORM\Column(type="string", length=32)
      */
     protected $contentType;
 
     /**
      * @var string
      *
-     * @Gedmo\Translatable
-     * @ORM\Column(name="meta_title", type="string", length=55, nullable=true)
+     * @Gedmo\Translatable()
+     * @ORM\Column(type="string", length=55, nullable=true)
      */
     protected $metaTitle;
 
     /**
      * @var string
      *
-     * @Gedmo\Translatable
-     * @ORM\Column(name="meta_description", type="string", length=155, nullable=true)
+     * @Gedmo\Translatable()
+     * @ORM\Column(type="string", length=155, nullable=true)
      */
     protected $metaDescription;
 
@@ -79,32 +80,35 @@ class CmsPage
     protected $isActive;
 
     /**
-     * @var array
+     * @var string[]
+     *
+     * @Gedmo\Translatable()
      * @ORM\Column(type="json", nullable=true)
      */
-    private $extra;
+    protected $extra;
 
     /**
      * @var string
      *
-     * @Gedmo\Translatable
+     * @Gedmo\Translatable()
      * @ORM\Column(type="string", nullable=true)
      */
     protected $placeTitleOverwrite;
 
     /**
      * @var string[]
+     *
      * @NfqPlaceAssert\HasEmptySlots(manager="Nfq\CmsPageBundle\Service\CmsPlaceManager")
      * @ORM\Column(type="json", nullable=true)
      */
-    private $places;
+    protected $places;
 
     /**
      * @var bool
      *
      * @ORM\Column(type="boolean")
      */
-    private $isPublic;
+    protected $isPublic;
 
     /**
      * @var string
@@ -116,7 +120,7 @@ class CmsPage
     /**
      * @var string
      *
-     * @Gedmo\Translatable
+     * @Gedmo\Translatable()
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $title;
@@ -124,7 +128,7 @@ class CmsPage
     /**
      * @var string
      *
-     * @Gedmo\Translatable
+     * @Gedmo\Translatable()
      * @ORM\Column(type="text", nullable=true)
      */
     protected $text;
@@ -132,7 +136,7 @@ class CmsPage
     /**
      * @var string
      *
-     * @Gedmo\Translatable
+     * @Gedmo\Translatable()
      * @Gedmo\Slug(fields={"name"}, unique=true)
      * @ORM\Column(type="string", length=128, unique=true, nullable=true)
      */
@@ -142,12 +146,11 @@ class CmsPage
      * Max file size is 5MB
      * @Assert\Image(maxSize="5242880", maxSizeMessage="cmspages.errors.file_too_large")
      */
-    private $file;
+    protected $file;
 
     /**
      * @var string
      *
-     * @Gedmo\Translatable
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $image;
@@ -155,25 +158,16 @@ class CmsPage
     /**
      * @var string
      *
-     * @Gedmo\Translatable
+     * @Gedmo\Translatable()
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $imageAlt;
 
     /**
-     * @var string
-     *
-     * @Gedmo\Locale
-     * Used locale to override Translation listener`s locale
-     * this is not a mapped field of entity metadata, just a simple property
-     */
-    private $locale;
-
-    /**
      * @var int
      * @ORM\Column(type="integer")
      */
-    private $sortPosition = 0;
+    protected $sortPosition = 0;
 
     public function __construct()
     {
@@ -182,30 +176,21 @@ class CmsPage
         $this->places = [];
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getPlaceTitleOverwrite()
+    public function getPlaceTitleOverwrite(): ?string
     {
         return $this->placeTitleOverwrite;
     }
 
-    /**
-     * @param string $placeTitleOverwrite
-     */
-    public function setPlaceTitleOverwrite($placeTitleOverwrite)
+    public function setPlaceTitleOverwrite(string $placeTitleOverwrite): self
     {
         $this->placeTitleOverwrite = $placeTitleOverwrite;
+
+        return $this;
     }
 
     /**
@@ -219,13 +204,11 @@ class CmsPage
     public function setPlaces(array $places): self
     {
         $this->places = $places;
+
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getContentType()
+    public function getContentType(): string
     {
         return $this->contentType;
     }
@@ -244,51 +227,33 @@ class CmsPage
         return $this;
     }
 
-    /**
-     * Get identifier
-     *
-     * @return mixed $identifier
-     */
-    public function getIdentifier()
+    public function getIdentifier(): ?string
     {
         return $this->identifier;
     }
 
-    public function setTitle($title): self
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return mixed
-     */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * Get text
-     *
-     * @return mixed
-     */
-    public function getText()
+    public function getText(): ?string
     {
         return $this->text;
     }
 
-    /**
-     * Set text
-     *
-     * @param mixed $text
-     */
-    public function setText($text)
+    public function setText(string $text): self
     {
         $this->text = $text;
+
+        return $this;
     }
 
     public function setSlug(string $slug): self
@@ -298,12 +263,7 @@ class CmsPage
         return $this;
     }
 
-    /**
-     * Get slug
-     *
-     * @return mixed
-     */
-    public function getSlug()
+    public function getSlug(): ?string
     {
         return $this->slug;
     }
@@ -329,18 +289,12 @@ class CmsPage
         $this->tempImage = null;
     }
 
-    /**
-     * @return string
-     */
-    public function getTempFile()
+    public function getTempFile(): ?string
     {
         return $this->tempImage;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getImage()
+    public function getImage(): ?string
     {
         return $this->image;
     }
@@ -364,19 +318,6 @@ class CmsPage
         return $this->isActive;
     }
 
-    public function setLocale(string $locale): void
-    {
-        $this->locale = $locale;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
     public function setMetaDescription(string $metaDescription): self
     {
         $this->metaDescription = $metaDescription;
@@ -384,12 +325,7 @@ class CmsPage
         return $this;
     }
 
-    /**
-     * Get metaDescription
-     *
-     * @return string
-     */
-    public function getMetaDescription()
+    public function getMetaDescription(): ?string
     {
         return $this->metaDescription;
     }
@@ -401,12 +337,7 @@ class CmsPage
         return $this;
     }
 
-    /**
-     * Get title
-     *
-     * @return string
-     */
-    public function getMetaTitle()
+    public function getMetaTitle(): ?string
     {
         return $this->metaTitle;
     }
@@ -423,10 +354,7 @@ class CmsPage
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getImageAlt()
+    public function getImageAlt(): ?string
     {
         return $this->imageAlt;
     }
@@ -450,11 +378,17 @@ class CmsPage
         return $this;
     }
 
-    public function getExtra(): array
+    /**
+     * @return string[]|null
+     */
+    public function getExtra(): ?array
     {
         return $this->extra;
     }
 
+    /**
+     * @param string[] $extra
+     */
     public function setExtra(array $extra): self
     {
         $this->extra = $extra;

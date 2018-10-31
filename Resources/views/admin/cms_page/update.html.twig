@@ -10,22 +10,6 @@
    {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%title%': entity.title, '%cms_type%': cmsType})  }}
 {% endblock %}
 
-{% block page_box_body %}
-    <div class="row">
-        <div class="col-lg-12">
-            <ul class="nav nav-tabs" role="tablist">
-                {% for locale, form in forms %}
-                    <li class="{% if isActiveLocale(_context, locale) %}active{% endif %}"><a href="#{{ locale }}-tab" role="tab" data-toggle="tab">{{ locale }}</a></li>
-                {% endfor %}
-            </ul>
-            <br />
-            <div class="tab-content">
-                {% embed '@NfqCmsPage/admin/cms_page/_form.htm.twig' %}{% endembed %}
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
 {% block extra_js %}
     {{ tinymce_init() }}
 {% endblock %}

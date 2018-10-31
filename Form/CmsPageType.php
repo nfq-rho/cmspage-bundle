@@ -27,7 +27,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CmsPageType extends TranslatableType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -75,7 +75,7 @@ class CmsPageType extends TranslatableType
             }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 

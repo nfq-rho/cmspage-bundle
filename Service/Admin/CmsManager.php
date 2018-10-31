@@ -11,49 +11,48 @@
 
 namespace Nfq\CmsPageBundle\Service\Admin;
 
-use Nfq\CmsPageBundle\Event\CmsPageEvents;
-use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\AdminBundle\Service\Admin\AbstractAdminManager;
+use Nfq\CmsPageBundle\Entity\CmsPage;
+use Nfq\CmsPageBundle\Event\CmsPageEvents;
 use Nfq\CmsPageBundle\Repository\CmsPageRepository;
 
 /**
  * Class CmsManager
  * @package Nfq\CmsPageBundle\Service\Admin
- * @property CmsPageRepository $repository
  */
 class CmsManager extends AbstractAdminManager
 {
-    public function __construct(CmsPageRepository $repository)
-    {
-        parent::__construct($repository);
-    }
-
     public function delete(
-        $entity,
+        object $entity,
         string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_DELETE,
         string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_DELETE
-    ) {
+    ): object {
         return parent::delete($entity, $beforeEventName, $afterEventName);
     }
 
     public function insert(
-        $entity,
+        object $entity,
         string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_INSERT,
         string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_INSERT
-    ) {
+    ): object {
         return parent::insert($entity, $beforeEventName, $afterEventName);
     }
 
     public function save(
-        $entity,
+        object $entity,
         string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_SAVE,
         string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_SAVE
-    ) {
+    ): object {
         return parent::save($entity, $beforeEventName, $afterEventName);
     }
 
-    public function getEditableEntity($id, ?string $locale): ?CmsPage
+    public function getEntity($id, ?string $locale = null): ?CmsPage
     {
-        return $this->repository->getEditableEntity($id, $locale);
+        return $this->getRepository()->getEditableEntity($id, $locale);
+    }
+
+    public function getRepository(): CmsPageRepository
+    {
+        return $this->entityManager->getRepository(CmsPage::class);
     }
 }

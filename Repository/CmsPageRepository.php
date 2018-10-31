@@ -14,7 +14,9 @@ namespace Nfq\CmsPageBundle\Repository;
 use Doctrine\ORM\AbstractQuery;
 use Nfq\AdminBundle\PlaceManager\Repository\PlaceAwareRepositoryInterface;
 use Nfq\AdminBundle\Repository\ServiceEntityRepository;
+use Nfq\AdminBundle\Repository\TranslatableRepositoryTrait;
 use Nfq\CmsPageBundle\Entity\CmsPage;
+use Nfq\CmsPageBundle\Entity\CmsPageTranslation;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -23,6 +25,8 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRepositoryInterface
 {
+    use TranslatableRepositoryTrait;
+
     /** @var string */
     protected $entityClass = CmsPage::class;
 
@@ -56,6 +60,7 @@ class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRep
             ->setParameter('idf', $idf);
 
         $query = $qb->getQuery();
+
         $this->setTranslatableHints($query, $locale, false);
 
         return $query->getOneOrNullResult();
@@ -80,7 +85,7 @@ class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRep
     {
         return $this
             ->getEntityManager()
-            ->getRepository('NfqCmsPageBundle:CmsPageTranslation')
+            ->getRepository(CmsPageTranslation::class)
             ->findTranslations($cmsPage);
     }
 
