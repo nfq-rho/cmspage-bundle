@@ -23,26 +23,26 @@ use Nfq\CmsPageBundle\Repository\CmsPageRepository;
 class CmsManager extends AbstractAdminManager
 {
     public function delete(
-        object $entity,
+        $entity,
         string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_DELETE,
         string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_DELETE
-    ): object {
-        return parent::delete($entity, $beforeEventName, $afterEventName);
+    ): void {
+        parent::delete($entity, $beforeEventName, $afterEventName);
     }
 
     public function insert(
-        object $entity,
+        $entity,
         string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_INSERT,
         string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_INSERT
-    ): object {
+    ) {
         return parent::insert($entity, $beforeEventName, $afterEventName);
     }
 
     public function save(
-        object $entity,
+        $entity,
         string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_SAVE,
         string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_SAVE
-    ): object {
+    ) {
         return parent::save($entity, $beforeEventName, $afterEventName);
     }
 
