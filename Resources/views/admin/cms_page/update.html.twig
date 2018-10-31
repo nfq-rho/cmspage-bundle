@@ -3,13 +3,9 @@
 {% extends '@NfqCmsPage/admin/cms_page/create.html.twig' %}
 
 {% block page_title %}
-    {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%title%': entity.title, '%cms_type%': cmsType})  }}
+    {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%identifier%': entity.identifier, '%cms_type%': cmsType}) }}
 {% endblock %}
 
 {% block page_box_header %}
-   {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%title%': entity.title, '%cms_type%': cmsType})  }}
-{% endblock %}
-
-{% block extra_js %}
-    {{ tinymce_init() }}
+    {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%identifier%': entity.identifier, '%cms_type%': cmsType}) }}
 {% endblock %}

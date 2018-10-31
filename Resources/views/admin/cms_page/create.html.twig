@@ -1,17 +1,16 @@
 {% trans_default_domain 'adminInterface' %}
 {% set width = '80%' %}
 {% set cmsType = ('admin.cms.labels.adapter_' ~ app.request.query.get('_type'))|trans %}
-{% set title = 'admin.cms.cmspage_new'|trans({'%cms_type%': cmsType}) %}
 {% extends app.request.query.get('isModal')|default(false) ? '@NfqAdmin/modal.html.twig' : '@NfqAdmin/base/index.html.twig' %}
 
 {% block page_title %}
-    {{ title }}
+    {{ 'admin.cms.cmspage_new'|trans({'%cms_type%': cmsType}) }}
 {% endblock %}
 
 {% block page_subtitle %}{% endblock %}
 
 {% block page_box_header %}
-    {{ title }}
+    {{ 'admin.cms.cmspage_new'|trans({'%cms_type%': cmsType}) }}
 {% endblock %}
 
 {% block page_box_body %}
