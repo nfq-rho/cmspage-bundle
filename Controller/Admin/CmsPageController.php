@@ -71,7 +71,7 @@ class CmsPageController extends Controller
     /**
      * @Template()
      */
-    public function indexAction(Request $request): array
+    public function indexAction(Request $request)
     {
         $response = $this->traitIndexAction($request);
 
