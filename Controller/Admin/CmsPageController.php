@@ -208,9 +208,9 @@ class CmsPageController extends Controller
         return [$formBuilder->getForm(), $deleteForm];
     }
 
-    protected function getDeleteForm($id): FormInterface
+    protected function getDeleteForm($entity): FormInterface
     {
-        $uri = $this->generateUrl('nfq_cmspage_delete', ['id' => $id]);
+        $uri = $this->generateUrl('nfq_cmspage_delete', ['id' => $entity->getId()]);
 
         return $this->getFormManager()->getDeleteForm($uri);
     }
