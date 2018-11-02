@@ -203,7 +203,7 @@ class CmsPageController extends Controller
 
         $this->adapter->modifyForm($formBuilder);
 
-        $deleteForm = $this->getDeleteForm($id);
+        $deleteForm = $this->getDeleteForm($entity);
 
         return [$formBuilder->getForm(), $deleteForm];
     }
