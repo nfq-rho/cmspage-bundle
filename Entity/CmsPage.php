@@ -151,6 +151,7 @@ class CmsPage
     /**
      * @var string
      *
+     * @Gedmo\Translatable()
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $image;
