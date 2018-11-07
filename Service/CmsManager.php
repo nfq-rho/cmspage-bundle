@@ -179,8 +179,12 @@ class CmsManager
         return $entity;
     }
 
-    public function getPagesByType(string $type, ?string $locale = null, string $sortOrder = 'ASC'): array
-    {
+    public function getPagesByType(
+        string $type,
+        ?string $locale = null,
+        string $sortBy = 'id',
+        string $sortDirection = 'DESC'
+    ): array {
         $criteria = ['cms.contentType' => $type];
         $this->hideFromPublic($criteria);
 
@@ -190,8 +194,8 @@ class CmsManager
                 $criteria,
                 $locale,
                 false,
-                'sortPosition',
-                $sortOrder
+                $sortBy,
+                $sortDirection
             )
             ->getArrayResult();
     }
