@@ -1,4 +1,5 @@
 nfq_cmspage_view:
     path: /{slug}
     methods: [ "GET" ]
+    trailing_slash_on_root: false
     controller: NfqCmsPageBundle:CmsPage:view
