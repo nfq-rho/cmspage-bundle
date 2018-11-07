@@ -41,7 +41,6 @@ class CmsManager
     }
 
     public function getRepository(): CmsPageRepository
-
     {
         return $this->repository;
     }
@@ -182,17 +181,18 @@ class CmsManager
         return $entity;
     }
 
-    public function getPagesByType(string $type): array
+    public function getPagesByType(string $type, ?string $locale = null): array
     {
         $criteria = ['cms.contentType' => $type];
-
         $qb = $this->getRepository()->getQueryBuilder();
 
         $this->hideFromPublic($criteria);
-
         $this->getRepository()->addArrayCriteria($qb, $criteria);
+        $query = $qb->getQuery();
 
-        return $qb->getQuery()->getArrayResult();
+        $this->getRepository()->setTranslatableHints($query, $locale, false);
+
+        return $query->getArrayResult();
     }
 
     public function getCmsPageText(string $identifier, ?string $locale = null): string
