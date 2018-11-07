@@ -2,9 +2,7 @@
 
 /**
  * This file is part of the "NFQ Bundles" package.
- *
  * (c) NFQ Technologies UAB <info@nfq.com>
- *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
@@ -182,7 +180,7 @@ class CmsManager
         return $entity;
     }
 
-    public function getPagesByType(string $type): array
+    public function getPagesByType(string $type, string $sortOrder = 'ASC'): array
     {
         $criteria = ['cms.contentType' => $type];
 
@@ -191,6 +189,8 @@ class CmsManager
         $this->hideFromPublic($criteria);
 
         $this->getRepository()->addArrayCriteria($qb, $criteria);
+
+        $qb->orderBy($this->getRepository()->getAlias() . '.sortPosition', $sortOrder);
 
         return $qb->getQuery()->getArrayResult();
     }
