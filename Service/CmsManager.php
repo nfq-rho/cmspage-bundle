@@ -2,9 +2,7 @@
 
 /**
  * This file is part of the "NFQ Bundles" package.
- *
  * (c) NFQ Technologies UAB <info@nfq.com>
- *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
@@ -174,22 +172,24 @@ class CmsManager
             ->setUseQueryCache(false)
             ->getOneTranslatableByCriteria($criteria, $locale, false);
 
-        if (is_null($entity)) {
+        if (null === $entity) {
             throw new \Exception('cms.page_not_found');
         }
 
         return $entity;
     }
 
-    public function getPagesByType(string $type, ?string $locale = null): array
+    public function getPagesByType(string $type, ?string $locale = null, string $sortOrder = 'ASC'): array
     {
         $criteria = ['cms.contentType' => $type];
         $qb = $this->getRepository()->getQueryBuilder();
 
         $this->hideFromPublic($criteria);
-        $this->getRepository()->addArrayCriteria($qb, $criteria);
-        $query = $qb->getQuery();
 
+        $this->getRepository()->addArrayCriteria($qb, $criteria);
+        $qb->orderBy($this->getRepository()->getAlias() . '.sortPosition', $sortOrder);
+
+        $query = $qb->getQuery();
         $this->getRepository()->setTranslatableHints($query, $locale, false);
 
         return $query->getArrayResult();
@@ -209,7 +209,7 @@ class CmsManager
 
         $entity = $this->getRepository()->getOneTranslatableByCriteria($criteria, $locale, false);
 
-        if (is_null($entity)) {
+        if (null === $entity) {
             return '';
         }
 
