@@ -182,17 +182,18 @@ class CmsManager
     public function getPagesByType(string $type, ?string $locale = null, string $sortOrder = 'ASC'): array
     {
         $criteria = ['cms.contentType' => $type];
-        $qb = $this->getRepository()->getQueryBuilder();
-
         $this->hideFromPublic($criteria);
 
-        $this->getRepository()->addArrayCriteria($qb, $criteria);
-        $qb->orderBy($this->getRepository()->getAlias() . '.sortPosition', $sortOrder);
-
-        $query = $qb->getQuery();
-        $this->getRepository()->setTranslatableHints($query, $locale, false);
-
-        return $query->getArrayResult();
+        return $this
+            ->getRepository()
+            ->getTranslatableQueryByCriteriaSorted(
+                $criteria,
+                $locale,
+                false,
+                'sortPosition',
+                $sortOrder
+            )
+            ->getArrayResult();
     }
 
     public function getCmsPageText(string $identifier, ?string $locale = null): string
