@@ -160,7 +160,7 @@ class CmsPageController extends Controller
         $entity = $this->adapter->getEntityInstance();
         $entity->setLocale($locale);
 
-        $uri = $this->generateUrl('nfq_cmspage_create', ['_type' => $this->adapter->getType()]);
+        $uri = $this->generateUrl('nfq_cmspage_create', ['_type' => $this->adapter::getType()]);
 
         $formOptions = [
             'locale' => $locale,
@@ -191,7 +191,7 @@ class CmsPageController extends Controller
             'places' => $this->placeManager->getPlaceChoices(),
         ];
 
-        $uri = $this->generateUrl('nfq_cmspage_update', ['id' => $id, '_type' => $this->adapter->getType()]);
+        $uri = $this->generateUrl('nfq_cmspage_update', ['id' => $id, '_type' => $this->adapter::getType()]);
 
         $submit = $entity->getIsPublic()
             ? FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE | FormManager::SUBMIT_PREVIEW

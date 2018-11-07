@@ -22,7 +22,7 @@ class CmsAdapter extends AbstractAdapter
 {
     public const TYPE = 'cms';
 
-    public function getType(): string
+    public static function getType(): string
     {
         return self::TYPE;
     }

@@ -22,7 +22,7 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 interface CmsPageAdapterInterface extends ContainerAwareInterface
 {
-    public function getType(): string;
+    public static function getType(): string;
 
     public function getFormType(): CmsPageType;
 

@@ -22,7 +22,7 @@ class HtmlAdapter extends AbstractAdapter
 {
     public const TYPE = 'html';
 
-    public function getType(): string
+    public static function getType(): string
     {
         return self::TYPE;
     }
