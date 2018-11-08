@@ -1,10 +1,7 @@
 {% extends '@NfqCmsPage/base.html.twig' %}
 
 {% block cms_content %}
-    <div class="cms-page-container">
-        <h1 class="cms-page-title">{{ entity.title }}</h1>
-        <div class="cms-page-text">
-            {{ entity.text|raw }}
-        </div>
-    </div>
+    <h1>{{ entity.title }}</h1>
+
+    {{ entity.text|raw }}
 {% endblock %}
