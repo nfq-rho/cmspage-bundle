@@ -18,6 +18,7 @@ use Nfq\AdminBundle\Service\FormManager;
 use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\CmsPageBundle\Service\Adapters\CmsPageAdapterInterface;
 use Nfq\CmsPageBundle\Service\Admin\CmsManager;
+use Nfq\CmsPageBundle\Service\Admin\Search\CmsSearch;
 use Nfq\CmsPageBundle\Service\CmsManager as CmsManagerFront;
 use Nfq\CmsPageBundle\Service\CmsTypeManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -45,26 +46,31 @@ class CmsPageController extends Controller
     private $adapter;
 
     /** @var CmsManager */
-    private $cmsManager;
+    private $manager;
+
+    /** @var CmsSearch */
+    private $search;
 
     /** @var CmsManagerFront */
-    private $cmsManagerFront;
+    private $frontManager;
 
     /** @var CmsTypeManager */
-    private $cmsTypeManager;
+    private $typeManager;
 
     /** @var PlaceManagerInterface */
     private $placeManager;
 
     public function __construct(
-        CmsManager $cmsManager,
-        CmsManagerFront $cmsManagerFront,
-        CmsTypeManager $cmsTypeManager,
+        CmsManager $manager,
+        CmsSearch $search,
+        CmsManagerFront $frontManager,
+        CmsTypeManager $typeManager,
         PlaceManagerInterface $placeManager
     ) {
-        $this->cmsManager = $cmsManager;
-        $this->cmsManagerFront = $cmsManagerFront;
-        $this->cmsTypeManager = $cmsTypeManager;
+        $this->manager = $manager;
+        $this->search = $search;
+        $this->frontManager = $frontManager;
+        $this->typeManager = $typeManager;
         $this->placeManager = $placeManager;
     }
 
@@ -82,7 +88,7 @@ class CmsPageController extends Controller
 
     private function getTypeManager(): CmsTypeManager
     {
-        return $this->cmsTypeManager;
+        return $this->typeManager;
     }
 
     /**
@@ -128,17 +134,17 @@ class CmsPageController extends Controller
 
     protected function getEntityForLocale($id, string $locale = null): ?CmsPage
     {
-        return $this->cmsManager->getEntity($id, $locale);
+        return $this->manager->getEntity($id, $locale);
     }
 
     protected function getIndexActionResults(Request $request)
     {
-        return $this->cmsManager->getEntities($request);
+        return $this->search->getResults($request);
     }
 
     protected function redirectToPreview(CmsPage $entity): RedirectResponse
     {
-        $params = $this->cmsManagerFront->getCmsUrlParams($entity->getIdentifier(), $entity->getLocale());
+        $params = $this->frontManager->getCmsUrlParams($entity->getIdentifier(), $entity->getLocale());
 
         $params['_locale'] = $entity->getLocale();
 
@@ -217,16 +223,16 @@ class CmsPageController extends Controller
 
     protected function insertAfterCreateAction(CmsPage $entity): void
     {
-        $this->cmsManager->insert($entity);
+        $this->manager->insert($entity);
     }
 
     protected function deleteAfterDeleteAction(CmsPage $entity): void
     {
-        $this->cmsManager->delete($entity);
+        $this->manager->delete($entity);
     }
 
     protected function saveAfterUpdateAction(CmsPage $entity): void
     {
-        $this->cmsManager->save($entity);
+        $this->manager->save($entity);
     }
 }

@@ -66,13 +66,13 @@ class CmsPageType extends TranslatableType
                 'required' => false
             ]);
 
-            if (!empty($options['places'])) {
-                $builder->add('places_config', PlaceType::class, [
-                    'inherit_data' => true,
-                    'places' => $options['places'],
-                    'label' => false
-                ]);
-            }
+        if (!empty($options['places'])) {
+            $builder->add('places_config', PlaceType::class, [
+                'inherit_data' => true,
+                'places' => $options['places'],
+                'label' => false
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

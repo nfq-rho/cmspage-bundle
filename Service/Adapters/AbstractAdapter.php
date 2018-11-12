@@ -13,20 +13,20 @@ namespace Nfq\CmsPageBundle\Service\Adapters;
 
 use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\CmsPageBundle\Form\CmsPageType;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class AbstractAdapter
  * @package Nfq\CmsPageBundle\Service\Adapters
  */
-abstract class AbstractAdapter implements CmsPageAdapterInterface
+abstract class AbstractAdapter implements CmsPageAdapterInterface, ContainerAwareInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    use ContainerAwareTrait;
 
     /** @var array */
     protected $options;
@@ -42,11 +42,6 @@ abstract class AbstractAdapter implements CmsPageAdapterInterface
         $this->options = $options;
     }
 
-    public function setContainer(ContainerInterface $container = null): void
-    {
-        $this->container = $container;
-    }
-
     protected function getIsPublic(): bool
     {
         return $this->options['public'];
@@ -59,7 +54,7 @@ abstract class AbstractAdapter implements CmsPageAdapterInterface
 
     public function modifyForm(FormBuilderInterface $builder): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
 
             if (!$this->hasFeaturedImage()) {
@@ -80,13 +75,13 @@ abstract class AbstractAdapter implements CmsPageAdapterInterface
 
     public function getFormTypeInstance(): CmsPageType
     {
-        is_null($this->formType) && $this->formType = $this->getFormType();
+        null === $this->formType && $this->formType = $this->getFormType();
         return $this->formType;
     }
 
     public function getEntityInstance(): CmsPage
     {
-        is_null($this->entity) && $this->entity = $this->getEntity();
+        null === $this->entity && $this->entity = $this->getEntity();
         return $this->entity;
     }
 }

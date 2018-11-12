@@ -20,7 +20,7 @@ use Symfony\Component\Form\FormBuilderInterface;
  * Interface CmsPageAdapterInterface
  * @package Nfq\CmsPageBundle\Service\Adapters
  */
-interface CmsPageAdapterInterface extends ContainerAwareInterface
+interface CmsPageAdapterInterface
 {
     public static function getType(): string;
 

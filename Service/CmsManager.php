@@ -89,7 +89,6 @@ class CmsManager
                 //First try to find by slug
                 $entity = $this->getCmsPageBySlug($criteria, $locale);
             } catch (\Exception $ex) {
-
                 //If no page was found, try to find it by identifier
                 //Identifier is not translated, so locale here is for other translatable fields
                 $entity = $this->getCmsPageByIdentifier($criteria, $locale);

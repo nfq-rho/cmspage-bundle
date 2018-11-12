@@ -55,7 +55,9 @@ class CmsTypeManager implements ContainerAwareInterface
             array_keys($this->adapters),
             array_map(function ($item) {
                 return 'admin.cms.labels.adapter_' . $item;
-            }, array_keys($this->adapters)));
+            },
+            array_keys($this->adapters))
+        );
     }
 
     private function getDefaultAdapterClass(): string
@@ -90,7 +92,7 @@ class CmsTypeManager implements ContainerAwareInterface
         foreach ($configuredTypes as $name => $options) {
             $class = $this->resolveAdapterClass($name, $options);
 
-            /** @var CmsPageAdapterInterface $adapter */
+            /** @var ContainerAwareInterface $adapter */
             $adapter = new $class($options);
 
             if (isset($options['container_aware']) && $options['container_aware'] === true) {

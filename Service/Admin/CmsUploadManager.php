@@ -65,18 +65,18 @@ class CmsUploadManager
     {
         $filesDir = $this->getUploadPath($entityId);
 
-        if (!file_exists($filesDir)){
+        if (!file_exists($filesDir)) {
             return;
         }
 
         if (!is_dir($filesDir)) {
             $it = new \DirectoryIterator($filesDir);
-            foreach($it as $file) {
+            foreach ($it as $file) {
                 if ($file->isDot()) {
                     continue;
                 }
 
-                if ($file->isDir()){
+                if ($file->isDir()) {
                     rmdir($file->getRealPath());
                 } else {
                     unlink($file->getRealPath());

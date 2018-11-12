@@ -30,15 +30,6 @@ services:
             - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: postRemove }
 
-    Nfq\CmsPageBundle\Service\Admin\CmsManager:
-        tags:
-            - { name: nfq_admin.manager }
-
-    Nfq\CmsPageBundle\Service\Admin\Search\CmsSearch:
-        arguments: [ '%nfq_cmspage.admin.default_search_fields%' ]
-        tags:
-            - { name: nfq_admin.search, manager: Nfq\CmsPageBundle\Service\Admin\CmsManager }
-
     Nfq\CmsPageBundle\Service\CmsPlaceManager:
         public: true
         calls:

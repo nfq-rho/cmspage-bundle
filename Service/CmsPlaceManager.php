@@ -42,10 +42,12 @@ class CmsPlaceManager extends PlaceManager
      */
     public function formatPlaceChoice(array &$item, string $key): void
     {
-        $item = sprintf('%s (%d/%d)',
+        $item = sprintf(
+            '%s (%d/%d)',
             $this->translator->trans($item['title']),
             $this->getUsedPlaceSlots($key),
-            $item['limit']);
+            $item['limit']
+        );
     }
 
     /**
@@ -67,7 +69,7 @@ class CmsPlaceManager extends PlaceManager
                 true,
                 'sortPosition',
                 $sortOrder
-                );
+            );
 
         $query
             ->expireQueryCache(true)

@@ -67,30 +67,40 @@ class CmsPageExtension extends \Twig_Extension
     public function getFunctions(): array
     {
         return [
-            new \Twig_SimpleFunction('cmspage', [$this, 'getPage'],
+            new \Twig_SimpleFunction(
+                'cmspage',
+                [$this, 'getPage'],
                 [
                     'needs_environment' => true,
                     'is_safe' => ['html'],
                 ]
             ),
-            new \Twig_SimpleFunction('cms_url', [$this, 'getPageUrl'],
+            new \Twig_SimpleFunction(
+                'cms_url',
+                [$this, 'getPageUrl'],
                 [
                     'needs_environment' => true,
                     'is_safe' => ['html'],
                 ]
             ),
-            new \Twig_SimpleFunction('cms_urls_in_place', [$this, 'getPageUrlsInPlace'],
+            new \Twig_SimpleFunction(
+                'cms_urls_in_place',
+                [$this, 'getPageUrlsInPlace'],
                 [
                     'needs_environment' => true,
                 ]
             ),
-            new \Twig_SimpleFunction('cms_in_place', [$this, 'getPagesInPlace'],
+            new \Twig_SimpleFunction(
+                'cms_in_place',
+                [$this, 'getPagesInPlace'],
                 [
                     'needs_environment' => true,
                 ]
             ),
             new \Twig_SimpleFunction('cms_image_src', [$this, 'getCmsImageSrc']),
-            new \Twig_SimpleFunction('cms_urls_raw', [$this, 'getPageUrlsRaw'],
+            new \Twig_SimpleFunction(
+                'cms_urls_raw',
+                [$this, 'getPageUrlsRaw'],
                 [
                     'needs_environment' => true,
                     'is_safe' => ['html'],
