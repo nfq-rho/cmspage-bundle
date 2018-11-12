@@ -2,25 +2,25 @@
 #These routes are prefix with /admin/cms-pages in routing.yml
 nfq_cmspage_list:
     path: /
-    methods: [ "GET" ]
-    controller: NfqCmsPageBundle:Admin/CmsPage:index
+    methods: [ GET ]
+    controller: Nfq\CmsPageBundle\Controller\Admin\CmsPageController::indexAction
 
 nfq_cmspage_new:
     path: /new
-    methods: [ "GET" ]
-    controller: NfqCmsPageBundle:Admin/CmsPage:new
+    methods: [ GET ]
+    controller: Nfq\CmsPageBundle\Controller\Admin\CmsPageController::newAction
 
 nfq_cmspage_create:
     path: /new
-    methods: [ "POST" ]
-    controller: NfqCmsPageBundle:Admin/CmsPage:create
+    methods: [ POST ]
+    controller: Nfq\CmsPageBundle\Controller\Admin\CmsPageController::createAction
 
 nfq_cmspage_update:
     path: /{id}/update
-    methods: [ "GET", "POST" ]
-    controller: NfqCmsPageBundle:Admin/CmsPage:update
+    methods: [ GET, POST ]
+    controller: Nfq\CmsPageBundle\Controller\Admin\CmsPageController::updateAction
 
 nfq_cmspage_delete:
     path: /{id}/delete
-    methods: [ "GET", "POST" ]
-    controller: NfqCmsPageBundle:Admin\CmsPage:delete
+    methods: [ GET, POST ]
+    controller: Nfq\CmsPageBundle\Controller\Admin\CmsPageController::deleteAction
