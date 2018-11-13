@@ -1,6 +1,6 @@
 {% trans_default_domain 'adminInterface' %}
 
-{% include '@NfqAdmin/_form/_form_delete.html.twig' with {'form': deleteForm|default(false)} only %}
+{% include '@NfqAdmin/_form/_form_delete.html.twig' with {'form': deleteForm|default(false), 'forceConfirm': true} only %}
 
 {{ form_start(form) }}
 

@@ -12,5 +12,5 @@
 {% endblock %}
 
 {% block page_box_footer_actions %}
-    {% include 'NfqAdminBundle:_form:_form_delete.html.twig' with {'form': delete_form} only %}
+    {% include '@NfqAdmin/_form/_form_delete.html.twig' with {'form': deleteForm|default(false), 'isModal': isModal} only %}
 {% endblock %}
