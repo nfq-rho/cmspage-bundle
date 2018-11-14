@@ -40,7 +40,7 @@ class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRep
         $qb = $this->getQueryBuilder()
             ->select('COUNT(cms.id)');
 
-        $this->addArrayCriteria($qb, ['cms.places' => '%' . $placeId . '%']);
+        $this->addCriteria($qb, ['cms.places' => '%' . $placeId . '%']);
 
         return (int)$qb->getQuery()->getSingleScalarResult();
     }
@@ -51,7 +51,7 @@ class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRep
     public function getCmsPage(string $idf, array $criteria = [], string $locale = null): ?CmsPage
     {
         $qb = $this->getQueryBuilder();
-        $this->addArrayCriteria($qb, $criteria);
+        $this->addCriteria($qb, $criteria);
 
         $qb
             ->select('cms')
