@@ -4,6 +4,8 @@
 
 {{ form_start(form) }}
 
+<input type="hidden" name="submitLocale" value="{{ locale }}" />
+
 {% include '@NfqAdmin/_form/_form_submit.html.twig' with {'form': form} only %}
 
 <div class="row">
