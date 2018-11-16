@@ -9,7 +9,6 @@ services:
 
         bind:
             $defaultLocale: '%kernel.default_locale%'
-            $bundleConfig: '%nfq_cmspage.config%'
 
     Nfq\AdminBundle\PlaceManager\PlaceManagerInterface: '@Nfq\CmsPageBundle\Service\CmsPlaceManager'
 

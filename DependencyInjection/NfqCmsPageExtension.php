@@ -33,7 +33,7 @@ class NfqCmsPageExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
-        $loader->load('menu.yaml');
+        $loader->load('admin_menu.yaml');
 
         $this->mapConfig($container, $configs[0]);
     }
