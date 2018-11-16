@@ -12,13 +12,11 @@
 namespace Nfq\CmsPageBundle\Twig;
 
 use Nfq\AdminBundle\PlaceManager\PlaceManagerInterface;
-use Nfq\CmsPageBundle\Entity\CmsPage;
-use Nfq\CmsPageBundle\Service\Admin\CmsUploadManager;
 use Nfq\CmsPageBundle\Service\CmsManager;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class CmsPageExtension
@@ -38,22 +36,17 @@ class CmsPageExtension extends \Twig_Extension
     /** @var SessionInterface */
     private $session;
 
-    /** @var CmsUploadManager */
-    private $uploadManager;
-
     /** @var PlaceManagerInterface */
     private $placeManager;
 
     public function __construct(
         CmsManager $manager,
-        CmsUploadManager $uploadManager,
         PlaceManagerInterface $placeManager,
         RouterInterface $router
     ) {
         $this->router = $router;
         $this->manager = $manager;
         $this->placeManager = $placeManager;
-        $this->uploadManager = $uploadManager;
     }
 
     /**
@@ -97,7 +90,6 @@ class CmsPageExtension extends \Twig_Extension
                     'needs_environment' => true,
                 ]
             ),
-            new \Twig_SimpleFunction('cms_image_src', [$this, 'getCmsImageSrc']),
             new \Twig_SimpleFunction(
                 'cms_urls_raw',
                 [$this, 'getPageUrlsRaw'],
@@ -107,14 +99,6 @@ class CmsPageExtension extends \Twig_Extension
                 ]
             ),
         ];
-    }
-
-    /**
-     * @param CmsPage|array $entity
-     */
-    public function getCmsImageSrc($entity): string
-    {
-        return $this->uploadManager->getWebPathForEntity($entity);
     }
 
     /**

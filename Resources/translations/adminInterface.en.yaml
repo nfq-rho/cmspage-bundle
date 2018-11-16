@@ -28,8 +28,8 @@ admin:
             title: Title
             text: Text
             slug: URL slug
-            image: Image
-            file: Image
+            image:
+                alt_text: Image alt text
 
         search_placeholder: Search...
         search_place_placeholder: Page type

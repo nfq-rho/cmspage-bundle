@@ -58,8 +58,9 @@ abstract class AbstractAdapter implements CmsPageAdapterInterface, ContainerAwar
             $form = $event->getForm();
 
             if (!$this->hasFeaturedImage()) {
-                $form->remove('file');
-                $form->remove('imageAlt');
+                $form
+                    ->remove('imageFile')
+                    ->remove('imageAltText');
             }
 
             if (!$this->getIsPublic()) {

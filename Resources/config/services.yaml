@@ -21,15 +21,6 @@ services:
         resource: '../../Controller'
         tags: ['controller.service_arguments']
 
-    Nfq\CmsPageBundle\EventListener\Doctrine\FileUploadListener:
-        arguments: [ '@Nfq\CmsPageBundle\Service\Admin\CmsUploadManager' ]
-        tags:
-            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: preFlush }
-            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: postUpdate }
-            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: Nfq\CmsPageBundle\Entity\CmsPage, event: postRemove }
-
     Nfq\CmsPageBundle\Service\CmsPlaceManager:
         public: true
         calls:

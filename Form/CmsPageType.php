@@ -14,12 +14,14 @@ namespace Nfq\CmsPageBundle\Form;
 use Nfq\AdminBundle\Form\TranslatableType;
 use Nfq\AdminBundle\PlaceManager\Form\PlaceType;
 use Nfq\CmsPageBundle\Entity\CmsPage;
+use Nfq\AdminBundle\ImageUpload\Form\ImageType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 /**
  * Class CmsPageType
@@ -46,10 +48,6 @@ class CmsPageType extends TranslatableType
             ->add('slug', TextType::class, [
                 'required' => false,
             ])
-            ->add('file')
-            ->add('imageAlt', TextType::class, [
-                'required' => false
-            ])
             ->add('extra', CmsPageExtraType::class, [
                 'label' => false,
                 'allow_extra_fields' => true,
@@ -60,10 +58,24 @@ class CmsPageType extends TranslatableType
                 'attr' => ['class' => 'tinymce']
             ])
             ->add('text_simple', TextareaType::class, [
-                'label' => false, 'property_path' => 'text'
+                'label' => false,
+                'property_path' => 'text'
             ])
             ->add('sortPosition', IntegerType::class, [
                 'required' => false
+            ])
+            ->add('imageFile', VichImageType::class, [
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => true,
+                'image_uri' => true,
+            ])
+            ->add('imageAltText', TextType::class, [
+                'required' => false,
+                'property_path' => 'image.altText',
+                'attr' => [
+                    'placeholder' => 'admin.cms.labels.image.alt_text',
+                ]
             ]);
 
         if (!empty($options['places'])) {

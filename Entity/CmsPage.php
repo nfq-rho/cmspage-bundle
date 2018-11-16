@@ -11,23 +11,30 @@
 
 namespace Nfq\CmsPageBundle\Entity;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Nfq\AdminBundle\Entity\ImageUpload\Image;
 use Nfq\AdminBundle\PlaceManager\Validator\Constraints as NfqPlaceAssert;
 use Nfq\AdminBundle\Translatable\Entity\TranslatableTrait;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
+ * @Gedmo\TranslationEntity(class="Nfq\CmsPageBundle\Entity\CmsPageTranslation")
  * @ORM\Table(name="cmspage", indexes={
  *      @ORM\Index(name="type_idx", columns={"content_type"}),
  *      @ORM\Index(name="sort_position_idx", columns={"sort_position"}),
  * })
  * @ORM\Entity(repositoryClass="Nfq\CmsPageBundle\Repository\CmsPageRepository")
+ * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity(fields={"slug"}, message="admin.cmspage.errors.field_not_unique")
  * @UniqueEntity(fields={"identifier"}, message="admin.cmspage.errors.field_not_unique")
- * @Gedmo\TranslationEntity(class="Nfq\CmsPageBundle\Entity\CmsPageTranslation")
+ * @Vich\Uploadable()
  */
 class CmsPage
 {
@@ -143,26 +150,18 @@ class CmsPage
     protected $slug;
 
     /**
-     * Max file size is 5MB
-     * @Assert\Image(maxSize="5242880", maxSizeMessage="cmspages.errors.file_too_large")
-     */
-    protected $file;
-
-    /**
-     * @var string
+     * @var Image
      *
-     * @Gedmo\Translatable(fallback=true)
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Embedded(class="Nfq\AdminBundle\Entity\ImageUpload\Image", columnPrefix="img_")
      */
     protected $image;
 
     /**
-     * @var string
-     *
-     * @Gedmo\Translatable()
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var File
+     * @Assert\Image(maxSize="5242880", maxSizeMessage="admin.cmspage.errors.file_too_large")
+     * @Vich\UploadableField(mapping="cms_image", fileNameProperty="image.name", mimeType="image.mimeType", dimensions="image.dimensions")
      */
-    protected $imageAlt;
+    private $imageFile;
 
     /**
      * @var int
@@ -170,11 +169,37 @@ class CmsPage
      */
     protected $sortPosition = 0;
 
+    /**
+     * @var DateTimeInterface
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @var DateTimeInterface
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
     public function __construct()
     {
         $this->isActive = false;
         $this->extra = [];
         $this->places = [];
+        $this->image = new Image();
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateTimestamps(): void
+    {
+        $this->updatedAt = new DateTimeImmutable();
+
+        if (null === $this->createdAt) {
+            $this->createdAt = new DateTimeImmutable();
+        }
     }
 
     public function getId(): ?int
@@ -269,18 +294,23 @@ class CmsPage
         return $this->slug;
     }
 
-    public function getFile(): ?UploadedFile
+    public function getImageFile(): ?File
     {
-        return $this->file;
+        return $this->imageFile;
     }
 
-    public function setFile(UploadedFile $file): self
+    /**
+     * @param UploadedFile|File $imageFile
+     */
+    public function setImageFile(?File $imageFile): self
     {
-        if (null !== $this->image) {
-            $this->tempImage = $this->image;
-        }
+        $this->imageFile = $imageFile;
 
-        $this->file = $file;
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new DateTimeImmutable();
+        }
 
         return $this;
     }
@@ -295,12 +325,12 @@ class CmsPage
         return $this->tempImage;
     }
 
-    public function getImage(): ?string
+    public function getImage(): Image
     {
         return $this->image;
     }
 
-    public function setImage(string $image): self
+    public function setImage(Image $image): self
     {
         $this->image = $image;
 
@@ -351,18 +381,6 @@ class CmsPage
     public function setIsPublic(bool $isPublic): self
     {
         $this->isPublic = $isPublic;
-
-        return $this;
-    }
-
-    public function getImageAlt(): ?string
-    {
-        return $this->imageAlt;
-    }
-
-    public function setImageAlt(string $imageAlt): self
-    {
-        $this->imageAlt = $imageAlt;
 
         return $this;
     }

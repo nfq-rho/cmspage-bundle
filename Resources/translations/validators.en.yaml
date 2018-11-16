@@ -1,3 +1,6 @@
-cmspages.errors.file_too_large: File is too large. Max allowed size is {{ limit }} {{ suffix }}.
-cmspages.errors.wrong_mime: Wrong file format. Allow file formats are  {{ types }}.
-cmspage.errors.field_not_unique: This value already exists
+admin:
+    cmspage:
+        errors:
+            file_too_large: File is too large. Max allowed size is {{ limit }} {{ suffix }}.
+            wrong_mime: Wrong file format. Allow file formats are  {{ types }}.
+            field_not_unique: This value already exists

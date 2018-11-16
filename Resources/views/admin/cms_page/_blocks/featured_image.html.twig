@@ -1,28 +1,22 @@
 {% trans_default_domain 'adminInterface' %}
-{% set featuredImage = '' %}
-{% if form.vars.value.image is not empty %}
-    {% set featuredImage = cms_image_src(form.vars.value) %}
-{% endif %}
-<img {% if featuredImage is not empty %}src="{{ featuredImage }}"{% endif %}
-     alt="{{ 'admin.cms.image.preview_notice'|trans }}" class="img-thumbnail"
-     data-src="holder.js/100px200?text={{ 'admin.cms.image.preview_notice'|trans }}"/>
-<br/><br/>
 
-{% if form.file is defined %}
-    {{ form_row(form.file) }}
-{% endif %}
+{% if form.imageFile is defined %}
+    {{ form_widget(form.imageFile) }}
 
-{% if form.imageAlt is defined %}
-    <div class="col-sm-10">
-        {{ form_row(form.imageAlt, {
-            'attr': {
-                'class': 'countable',
-                'maxlength': '255',
-                'data-counter-container': '#imageAlt-counter-' ~ locale
-            }
-        }) }}
-    </div>
-    <div class="col-sm-2">
-        <span class="badge"><span id="imageAlt-counter-{{ locale }}"></span> / 255</span>
+    <br/>
+
+    <div class="row">
+        <div class="col-sm-10">
+            {{ form_widget(form.imageAltText, {
+                'attr': {
+                    'class': 'countable',
+                    'maxlength': '255',
+                    'data-counter-container': '#alt-text-counter-' ~ locale
+                }
+            }) }}
+        </div>
+        <div class="col-sm-2">
+            <span class="badge"><span id="alt-text-counter-{{ locale }}"></span> / 255</span>
+        </div>
     </div>
 {% endif %}

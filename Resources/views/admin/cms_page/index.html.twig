@@ -70,8 +70,8 @@
                         {% endif %}
                     </td>
                     <td style="width: 110px" data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ modalHref }}">
-                        {% if cmsPage.image is not empty %}
-                            <img src="{{ cms_image_src(cmsPage) }}" alt="Cms Page image" style="width:100px;">
+                        {% if cmsPage.image.name is not empty %}
+                            <img src="{{ asset(cmsPage.image.name, 'cms.image') }}" alt="Cms Page image" style="width:100px;">
                         {% endif %}
                     </td>
                     <td data-target="#nfq_admin_modal" data-toggle="modal" data-href="{{ modalHref }}">
