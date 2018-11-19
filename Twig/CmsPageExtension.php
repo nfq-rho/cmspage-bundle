@@ -13,7 +13,7 @@ namespace Nfq\CmsPageBundle\Twig;
 
 use Nfq\AdminBundle\PlaceManager\PlaceManagerInterface;
 use Nfq\CmsPageBundle\Service\CmsManager;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouterInterface;
@@ -30,31 +30,30 @@ class CmsPageExtension extends \Twig_Extension
     /** @var CmsManager */
     private $manager;
 
+    /** @var PlaceManagerInterface */
+    private $placeManager;
+
     /** @var RouterInterface */
     private $router;
 
-    /** @var SessionInterface */
-    private $session;
+    /** @var RequestStack */
+    private $requestStack;
 
-    /** @var PlaceManagerInterface */
-    private $placeManager;
+    /** @var string */
+    private $defaultLocale;
 
     public function __construct(
         CmsManager $manager,
         PlaceManagerInterface $placeManager,
-        RouterInterface $router
+        RouterInterface $router,
+        RequestStack $requestStack,
+        string $defaultLocale
     ) {
         $this->router = $router;
         $this->manager = $manager;
         $this->placeManager = $placeManager;
-    }
-
-    /**
-     * @required
-     */
-    public function setSession(SessionInterface $session): void
-    {
-        $this->session = $session;
+        $this->requestStack = $requestStack;
+        $this->defaultLocale = $defaultLocale;
     }
 
     public function getFunctions(): array
@@ -64,7 +63,6 @@ class CmsPageExtension extends \Twig_Extension
                 'cmspage',
                 [$this, 'getPage'],
                 [
-                    'needs_environment' => true,
                     'is_safe' => ['html'],
                 ]
             ),
@@ -72,29 +70,21 @@ class CmsPageExtension extends \Twig_Extension
                 'cms_url',
                 [$this, 'getPageUrl'],
                 [
-                    'needs_environment' => true,
                     'is_safe' => ['html'],
                 ]
             ),
             new \Twig_SimpleFunction(
                 'cms_urls_in_place',
-                [$this, 'getPageUrlsInPlace'],
-                [
-                    'needs_environment' => true,
-                ]
+                [$this, 'getPageUrlsInPlace']
             ),
             new \Twig_SimpleFunction(
                 'cms_in_place',
-                [$this, 'getPagesInPlace'],
-                [
-                    'needs_environment' => true,
-                ]
+                [$this, 'getPagesInPlace']
             ),
             new \Twig_SimpleFunction(
                 'cms_urls_raw',
                 [$this, 'getPageUrlsRaw'],
                 [
-                    'needs_environment' => true,
                     'is_safe' => ['html'],
                 ]
             ),
@@ -107,12 +97,11 @@ class CmsPageExtension extends \Twig_Extension
      * @throws \Exception
      */
     public function getPage(
-        \Twig_Environment $environment,
         string $identifier,
         string $field = 'text',
         bool $raw = true
     ): string {
-        $locale = $this->getLocale($environment);
+        $locale = $this->getLocale();
 
         try {
             $cmsPage = $this->manager->getCmsPageByIdentifier($identifier, $locale);
@@ -135,13 +124,9 @@ class CmsPageExtension extends \Twig_Extension
         return $value;
     }
 
-    public function getPageUrlsInPlace(
-        \Twig_Environment $environment,
-        string $placeId,
-        bool $raw = false,
-        string $sortOrder = 'ASC'
-    ): array {
-        $locale = $this->getLocale($environment);
+    public function getPageUrlsInPlace(string $placeId, bool $raw = false, string $sortOrder = 'ASC'): array
+    {
+        $locale = $this->getLocale();
 
         try {
             $cmsPages = $this->placeManager->getItemsInPlace($placeId, $locale, $sortOrder);
@@ -160,24 +145,20 @@ class CmsPageExtension extends \Twig_Extension
         return $result;
     }
 
-    public function getPagesInPlace(\Twig_Environment $environment, string $placeId): array
+    public function getPagesInPlace(string $placeId): array
     {
-        $locale = $this->getLocale($environment);
+        $locale = $this->getLocale();
 
         return $this->placeManager->getItemsInPlace($placeId, $locale);
     }
 
     public function getPageUrl(
-        \Twig_Environment $environment,
         string $identifier,
         string $locale = null,
         string $routeName = null,
         bool $raw = false
     ): string {
-        if (empty($locale)) {
-            $locale = $this->getLocale($environment);
-        }
-
+        $locale = $locale ?: $this->getLocale();
         $urlParams = $this->manager->getCmsUrlParams($identifier, $locale, $raw);
 
         return $this->getUrl($urlParams, $routeName, $raw);
@@ -186,11 +167,11 @@ class CmsPageExtension extends \Twig_Extension
     /**
      * @throws \Exception
      */
-    public function getPageUrlsRaw(\Twig_Environment $environment): array
+    public function getPageUrlsRaw(): array
     {
         $routes = [];
         //Get entity by locale and slug/identifier
-        $cmsPage = $this->manager->getCmsPage($this->getSlug($environment), $this->getLocale($environment));
+        $cmsPage = $this->manager->getCmsPage($this->getSlug(), $this->getLocale());
 
         foreach ($this->manager->getCmsPageTranslations($cmsPage) as $locale => $translation) {
             $urlParams['_locale'] = $locale;
@@ -206,35 +187,22 @@ class CmsPageExtension extends \Twig_Extension
         return $routes;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    private function getLocale(): string
     {
-        return 'cmspage_extension';
-    }
-
-    /**
-     * @param \Twig_Environment $environment
-     * @return string
-     */
-    private function getLocale(\Twig_Environment $environment)
-    {
-        if ($this->session && $this->session->has('_locale')) {
-            return $this->session->get('_locale');
+        if (null !== $request = $this->requestStack->getCurrentRequest()) {
+            return $request->getLocale();
         }
 
-        return $environment->getGlobals()['app']->getRequest()->getLocale();
+        return $this->defaultLocale;
     }
 
-    /**
-     * @param $environment
-     *
-     * @return string
-     */
-    private function getSlug($environment)
+    private function getSlug(): ?string
     {
-        return $environment->getGlobals()['app']->getRequest()->attributes->get('slug');
+        if (null !== $request = $this->requestStack->getCurrentRequest()) {
+            return $request->attributes->get('slug');
+        }
+
+        return null;
     }
 
     private function getUrl(array $urlParams, ?string $routeName = null, bool $raw = false): string

@@ -31,9 +31,6 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('upload_dir')
-                    ->isRequired()
-                ->end()
                 ->arrayNode('types')
                     ->isRequired()
                     ->requiresAtLeastOneElement()

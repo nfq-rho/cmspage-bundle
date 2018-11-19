@@ -15,19 +15,13 @@
 {% if form.metaTitle is defined %}
     <div class="form-group">
         {{ form_label(form.metaTitle) }}
-        <div class="row col-sm-10">
-            <div class="col-sm-10">
-                {{ form_widget(form.metaTitle, {
-                    'attr': {
-                        'class': 'countable',
-                        'maxlength': '55',
-                        'data-counter-container': '#title-counter-' ~ locale
-                    }
-                }) }}
-            </div>
-            <div class="col-sm-2">
-                <span class="badge"><span id="title-counter-{{ locale }}"></span> / 55</span>
-            </div>
+        <div class="col-sm-10">
+            {{ form_widget(form.metaTitle, {
+                'attr': {
+                    'class': 'countable',
+                    'data-maxlength': '55',
+                }
+            }) }}
         </div>
     </div>
 {% endif %}
@@ -35,19 +29,13 @@
 {% if form.metaDescription is defined %}
     <div class="form-group">
         {{ form_label(form.metaDescription) }}
-        <div class="row col-sm-10">
-            <div class="col-sm-10">
-                {{ form_widget(form.metaDescription, {
-                    'attr': {
-                        'class': 'countable',
-                        'maxlength': '155',
-                        'data-counter-container': '#description-counter-' ~ locale
-                    }
-                }) }}
-            </div>
-            <div class="col-sm-2">
-                <span class="badge"><span id="description-counter-{{ locale }}"></span> / 155</span>
-            </div>
+        <div class="col-sm-10">
+            {{ form_widget(form.metaDescription, {
+                'attr': {
+                    'class': 'countable',
+                    'data-maxlength': '155',
+                }
+            }) }}
         </div>
     </div>
 {% endif %}
@@ -68,6 +56,6 @@
 {% endif %}
 
 {% if form.extra is defined and form.extra.children|length > 0 %}
-    <hr />
+    <hr/>
     {{ form_widget(form.extra) }}
 {% endif %}

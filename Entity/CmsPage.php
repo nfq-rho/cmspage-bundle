@@ -41,13 +41,6 @@ class CmsPage
     use TranslatableTrait;
 
     /**
-     * Variable to temporarily store path to old file
-     *
-     * @var string
-     */
-    private $tempImage;
-
-    /**
      * @var integer
      *
      * @ORM\Column(type="integer")
@@ -159,7 +152,7 @@ class CmsPage
     /**
      * @var File
      * @Assert\Image(maxSize="5242880", maxSizeMessage="admin.cmspage.errors.file_too_large")
-     * @Vich\UploadableField(mapping="cms_image", fileNameProperty="image.name", mimeType="image.mimeType", dimensions="image.dimensions")
+     * @Vich\UploadableField(mapping="cms_image", fileNameProperty="image.name", mimeType="image.mimeType", size="image.size", dimensions="image.dimensions")
      */
     private $imageFile;
 
@@ -313,16 +306,6 @@ class CmsPage
         }
 
         return $this;
-    }
-
-    public function resetTempFile(): void
-    {
-        $this->tempImage = null;
-    }
-
-    public function getTempFile(): ?string
-    {
-        return $this->tempImage;
     }
 
     public function getImage(): Image

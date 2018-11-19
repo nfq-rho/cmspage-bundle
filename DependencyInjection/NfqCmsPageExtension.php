@@ -40,14 +40,6 @@ class NfqCmsPageExtension extends Extension
 
     private function mapConfig(ContainerBuilder $container, array $config): void
     {
-        $uploadDir = ltrim($config['upload_dir'], DIRECTORY_SEPARATOR);
-
-        $_config = [
-            'upload_absolute' => $container->getParameter('kernel.project_dir') . '/public/' . $uploadDir ,
-            'upload_relative' => $uploadDir,
-        ];
-
-        $container->setParameter('nfq_cmspage.config', $_config);
         $container->setParameter('nfq_cmspage.types', $config['types']);
 
         $places = isset($config['places']) ? (array)$config['places'] : [];

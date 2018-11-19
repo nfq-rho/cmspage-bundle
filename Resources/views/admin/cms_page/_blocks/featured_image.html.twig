@@ -6,17 +6,13 @@
     <br/>
 
     <div class="row">
-        <div class="col-sm-10">
+        <div class="col-sm-12">
             {{ form_widget(form.imageAltText, {
                 'attr': {
                     'class': 'countable',
-                    'maxlength': '255',
-                    'data-counter-container': '#alt-text-counter-' ~ locale
+                    'data-maxlength': '255',
                 }
             }) }}
-        </div>
-        <div class="col-sm-2">
-            <span class="badge"><span id="alt-text-counter-{{ locale }}"></span> / 255</span>
         </div>
     </div>
 {% endif %}
