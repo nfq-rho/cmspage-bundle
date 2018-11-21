@@ -134,10 +134,12 @@ class CmsPage
     protected $text;
 
     /**
+     * Can be nullable because there are certain types that do not have a slug
+     *
      * @var string
      *
      * @Gedmo\Translatable()
-     * @Gedmo\Slug(fields={"name"}, unique=true)
+     * @Gedmo\Slug(fields={"title"}, unique=true)
      * @ORM\Column(type="string", length=128, unique=true, nullable=true)
      */
     protected $slug;
