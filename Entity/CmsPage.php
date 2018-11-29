@@ -26,12 +26,14 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @Gedmo\TranslationEntity(class="Nfq\CmsPageBundle\Entity\CmsPageTranslation")
- * @ORM\Table(name="cmspage", indexes={
- *      @ORM\Index(name="type_idx", columns={"content_type"}),
- *      @ORM\Index(name="sort_position_idx", columns={"sort_position"}),
- * })
  * @ORM\Entity(repositoryClass="Nfq\CmsPageBundle\Repository\CmsPageRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @ORM\Table(
+ *     indexes={
+ *         @ORM\Index(name="type_idx", columns={"content_type"}),
+ *         @ORM\Index(name="sort_position_idx", columns={"sort_position"}),
+ *     }
+ * )
  * @UniqueEntity(fields={"slug"}, message="admin.cmspage.errors.field_not_unique")
  * @UniqueEntity(fields={"identifier"}, message="admin.cmspage.errors.field_not_unique")
  * @Vich\Uploadable()
@@ -41,7 +43,7 @@ class CmsPage
     use TranslatableTrait;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -139,7 +141,7 @@ class CmsPage
      * @var string
      *
      * @Gedmo\Translatable()
-     * @Gedmo\Slug(fields={"title"}, unique=true)
+     * @Gedmo\Slug(fields={"title"}, unique=true, updatable=false)
      * @ORM\Column(type="string", length=128, unique=true, nullable=true)
      */
     protected $slug;
