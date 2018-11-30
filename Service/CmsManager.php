@@ -196,6 +196,7 @@ class CmsManager
                 $sortBy,
                 $sortDirection
             )
+            ->useQueryCache(false)
             ->getArrayResult();
     }
 
