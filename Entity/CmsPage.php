@@ -11,10 +11,9 @@
 
 namespace Nfq\CmsPageBundle\Entity;
 
-use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Nfq\AdminBundle\Entity\ImageUpload\Image;
 use Nfq\AdminBundle\PlaceManager\Validator\Constraints as NfqPlaceAssert;
 use Nfq\AdminBundle\Translatable\Entity\TranslatableTrait;
@@ -27,7 +26,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * @Gedmo\TranslationEntity(class="Nfq\CmsPageBundle\Entity\CmsPageTranslation")
  * @ORM\Entity(repositoryClass="Nfq\CmsPageBundle\Repository\CmsPageRepository")
- * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(
  *     indexes={
  *         @ORM\Index(name="type_idx", columns={"content_type"}),
@@ -40,6 +38,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class CmsPage
 {
+    use TimestampableEntity;
     use TranslatableTrait;
 
     /**
@@ -166,37 +165,12 @@ class CmsPage
      */
     protected $sortPosition = 0;
 
-    /**
-     * @var DateTimeInterface
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @var DateTimeInterface
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $updatedAt;
-
     public function __construct()
     {
         $this->isActive = false;
         $this->extra = [];
         $this->places = [];
         $this->image = new Image();
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function updateTimestamps(): void
-    {
-        $this->updatedAt = new DateTimeImmutable();
-
-        if (null === $this->createdAt) {
-            $this->createdAt = new DateTimeImmutable();
-        }
     }
 
     public function getId(): ?int
@@ -306,7 +280,7 @@ class CmsPage
         if (null !== $imageFile) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = new \DateTime();
         }
 
         return $this;
