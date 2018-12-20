@@ -18,11 +18,11 @@ use Nfq\AdminBundle\Service\FormManager;
 use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\CmsPageBundle\Service\Adapters\CmsPageAdapterInterface;
 use Nfq\CmsPageBundle\Service\Admin\CmsManager;
-use Nfq\CmsPageBundle\Service\Admin\Search\CmsSearch;
+use Nfq\CmsPageBundle\Service\Admin\CmsSearch;
 use Nfq\CmsPageBundle\Service\CmsManager as CmsManagerFront;
 use Nfq\CmsPageBundle\Service\CmsTypeManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Class CmsPageController
  * @package Nfq\CmsPageBundle\Controller\Admin
  */
-class CmsPageController extends Controller
+class CmsPageController extends AbstractController
 {
     use TranslatableCrudControllerTrait {
         newAction as traitNewAction;

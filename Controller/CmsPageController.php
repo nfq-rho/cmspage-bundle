@@ -13,16 +13,15 @@ namespace Nfq\CmsPageBundle\Controller;
 
 use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\CmsPageBundle\Service\CmsManager;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Class CmsPageController
  * @package Nfq\CmsPageBundle\Controller
  */
-class CmsPageController extends Controller
+class CmsPageController extends AbstractController
 {
     /** @var string */
     protected $defaultTemplate = '@NfqCmsPage/cms_page/view.html.twig';
@@ -30,13 +29,9 @@ class CmsPageController extends Controller
     /** @var CmsManager */
     private $cmsManager;
 
-    /** @var EngineInterface */
-    private $templating;
-
-    public function __construct(CmsManager $cmsManager, EngineInterface $templating)
+    public function __construct(CmsManager $cmsManager)
     {
         $this->cmsManager = $cmsManager;
-        $this->templating = $templating;
     }
 
     public function viewAction(Request $request, string $slug): Response
@@ -77,7 +72,7 @@ class CmsPageController extends Controller
         $customTemplate = sprintf('@NfqCmsPage/cms_page/_custom:%s.html.twig', $entity->getIdentifier());
         $finalTemplate = $this->defaultTemplate;
 
-        if ($this->templating->exists($customTemplate)) {
+        if ($this->l->exists($customTemplate)) {
             $finalTemplate = $customTemplate;
         }
 

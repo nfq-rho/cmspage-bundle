@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Nfq\CmsPageBundle\Service\Admin\Search;
+namespace Nfq\CmsPageBundle\Service\Admin;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -18,7 +18,7 @@ use Nfq\AdminBundle\Service\Generic\Search\GenericSearch;
 
 /**
  * Class CmsSearch
- * @package Nfq\CmsPageBundle\Service\Admin\Search
+ * @package Nfq\CmsPageBundle\Service\Admin
  */
 class CmsSearch extends GenericSearch
 {
