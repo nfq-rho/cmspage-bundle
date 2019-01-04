@@ -12,7 +12,6 @@
 namespace Nfq\CmsPageBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Nfq\AdminBundle\PlaceManager\PlaceManagerInterface;
 use Nfq\AdminBundle\PlaceManager\PlaceManager;
 use Nfq\AdminBundle\PlaceManager\Repository\PlaceAwareRepositoryInterface;
 use Nfq\CmsPageBundle\Entity\CmsPage;
@@ -37,9 +36,6 @@ class CmsPlaceManager extends PlaceManager
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function formatPlaceChoice(array &$item, string $key): void
     {
         $item = sprintf(
@@ -51,8 +47,6 @@ class CmsPlaceManager extends PlaceManager
     }
 
     /**
-     * Get categories in given place
-     *
      * @return CmsPage[]
      */
     public function getItemsInPlace(string $placeId, string $locale, string $sortOrder = 'ASC'): array
@@ -84,7 +78,7 @@ class CmsPlaceManager extends PlaceManager
      *
      * @return CmsPage[]
      */
-    public function getItemsInPlaceSorted(string $placeId, string $locale, string $sortOrder)
+    public function getItemsInPlaceSorted(string $placeId, string $locale, string $sortOrder): array
     {
         $criteria = [
             'places' => '%' . $placeId . '%',
