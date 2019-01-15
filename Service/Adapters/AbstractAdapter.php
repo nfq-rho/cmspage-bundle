@@ -42,7 +42,7 @@ abstract class AbstractAdapter implements CmsPageAdapterInterface, ContainerAwar
         $this->options = $options;
     }
 
-    protected function getIsPublic(): bool
+    protected function isPublic(): bool
     {
         return $this->options['public'];
     }
@@ -63,7 +63,7 @@ abstract class AbstractAdapter implements CmsPageAdapterInterface, ContainerAwar
                     ->remove('imageAltText');
             }
 
-            if (!$this->getIsPublic()) {
+            if (!$this->isPublic()) {
                 $form->remove('slug');
             }
         });

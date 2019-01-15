@@ -334,7 +334,7 @@ class CmsPage
         return $this->metaTitle;
     }
 
-    public function getIsPublic(): bool
+    public function isPublic(): bool
     {
         return $this->isPublic;
     }

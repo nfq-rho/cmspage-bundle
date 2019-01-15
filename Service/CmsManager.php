@@ -243,6 +243,8 @@ class CmsManager
         if ($this->authChecker->isGranted(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN'])) {
             $criteria['cms.isActive'] = true;
         }
+
+        $criteria['cms.isPublic'] = true;
     }
 
     private function addDefaultLocaleTranslation(CmsPage $cmsPage, array &$translations): void

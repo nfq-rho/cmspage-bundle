@@ -173,7 +173,7 @@ class CmsPageController extends AbstractController
             'places' => $this->placeManager->getPlaceChoices(),
         ];
 
-        $submit = $entity->getIsPublic()
+        $submit = $entity->isPublic()
             ? FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE | FormManager::SUBMIT_PREVIEW
             : FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE;
 
@@ -199,7 +199,7 @@ class CmsPageController extends AbstractController
 
         $uri = $this->generateUrl('nfq_cmspage_update', ['id' => $id, '_type' => $this->adapter::getType()]);
 
-        $submit = $entity->getIsPublic()
+        $submit = $entity->isPublic()
             ? FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE | FormManager::SUBMIT_PREVIEW
             : FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE;
 

@@ -41,7 +41,7 @@ class HtmlAdapter extends AbstractAdapter
     {
         $entity = new CmsPage();
 
-        $entity->setIsPublic($this->getIsPublic());
+        $entity->setIsPublic($this->isPublic());
         $entity->setContentType(self::TYPE);
 
         return $entity;

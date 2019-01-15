@@ -46,27 +46,6 @@ class CmsPageRepository extends ServiceEntityRepository implements PlaceAwareRep
     }
 
     /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function getCmsPage(string $idf, array $criteria = [], string $locale = null): ?CmsPage
-    {
-        $qb = $this->getQueryBuilder();
-        $this->addCriteria($qb, $criteria);
-
-        $qb
-            ->select('cms')
-            ->andWhere($qb->expr()->orX('cms.identifier = :idf', 'cms.slug = :idf'))
-            ->setMaxResults(1)
-            ->setParameter('idf', $idf);
-
-        $query = $qb->getQuery();
-
-        $this->setTranslatableHints($query, $locale, false);
-
-        return $query->getOneOrNullResult();
-    }
-
-    /**
      * Get CMS page by id with translated content.
      *
      * @throws \Doctrine\ORM\NonUniqueResultException
