@@ -41,7 +41,13 @@ class CmsPageController extends AbstractController
     public function viewAction(Request $request, string $slug): Response
     {
         try {
+            /** @var CmsPage $entity */
             $entity = $this->get('cms_manager')->getCmsPage($slug);
+
+            // Only public cms pages can be opened
+            if (!$entity->isPublic()) {
+                throw new \Exception('cms.page_not_found');
+            }
 
             $responseParams = [
                 'entity' => clone $entity,
