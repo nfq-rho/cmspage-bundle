@@ -182,7 +182,8 @@ class CmsManager
         string $type,
         ?string $locale = null,
         string $sortBy = 'id',
-        string $sortDirection = 'DESC'
+        string $sortDirection = 'DESC',
+        int $limit = null
     ): array {
         $criteria = ['cms.contentType' => $type];
         $this->hideFromPublic($criteria);
@@ -197,6 +198,7 @@ class CmsManager
                 $sortDirection
             )
             ->useQueryCache(false)
+            ->setMaxResults($limit)
             ->getArrayResult();
     }
 
