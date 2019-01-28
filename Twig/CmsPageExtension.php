@@ -215,8 +215,7 @@ class CmsPageExtension extends \Twig_Extension
                 return '';
             }
 
-            unset($urlParams['title']);
-            unset($urlParams['place_title']);
+            unset($urlParams['title'], $urlParams['place_title']);
         }
 
         if (empty($routeName)) {

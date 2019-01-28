@@ -24,6 +24,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CmsPageController extends AbstractController
 {
+    public const REQUEST_ATTRIBUTE_IDENTIFIER = '_cms_identifier';
+
     /** @var string */
     protected $defaultTemplate = '@NfqCmsPage/cms_page/view.html.twig';
 
@@ -48,6 +50,8 @@ class CmsPageController extends AbstractController
             if (!$entity->isPublic()) {
                 throw new \Exception('cms.page_not_found');
             }
+
+            $request->attributes->set(self::REQUEST_ATTRIBUTE_IDENTIFIER, $entity->getIdentifier());
 
             $responseParams = [
                 'entity' => clone $entity,

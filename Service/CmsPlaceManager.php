@@ -66,8 +66,8 @@ class CmsPlaceManager extends PlaceManager
             );
 
         $query
-            ->expireQueryCache(true)
-            ->expireResultCache(true)
+            ->expireQueryCache()
+            ->expireResultCache()
             ->setMaxResults($this->getPlaceLimit($placeId));
 
         return $query->getResult();
