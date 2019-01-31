@@ -1,0 +1,7 @@
+{% extends '@NfqCmsPage/base.html.twig' %}
+
+{% block cms_content %}
+    <h1>{{ entity.title }}</h1>
+
+    {{ entity.text|raw }}
+{% endblock %}

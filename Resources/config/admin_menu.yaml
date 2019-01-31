@@ -1,0 +1,5 @@
+services:
+    Nfq\CmsPageBundle\EventListener\AdminMenuListener:
+        parent: Nfq\AdminBundle\Menu\AdminMenuListener
+        tags:
+            - { name: kernel.event_listener, event: nfq_admin.side_menu_configure, method: onMenuConfigure }

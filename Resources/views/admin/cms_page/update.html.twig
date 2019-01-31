@@ -1,0 +1,11 @@
+{% trans_default_domain 'adminInterface' %}
+{% set cmsType = ('admin.cms.labels.adapter_' ~ app.request.query.get('_type'))|trans %}
+{% extends '@NfqCmsPage/admin/cms_page/create.html.twig' %}
+
+{% block page_title %}
+    {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%identifier%': entity.identifier, '%cms_type%': cmsType}) }}
+{% endblock %}
+
+{% block page_box_header %}
+    {{ 'admin.cms.cmspage_edit_title'|trans({'%id%': entity.id, '%identifier%': entity.identifier, '%cms_type%': cmsType}) }}
+{% endblock %}

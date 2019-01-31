@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -32,25 +32,14 @@ class NfqCmsPageExtension extends Extension
         $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        $loader->load('services.yaml');
+        $loader->load('admin_menu.yaml');
 
         $this->mapConfig($container, $configs[0]);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    private function mapConfig(ContainerBuilder $container, array $config)
+    private function mapConfig(ContainerBuilder $container, array $config): void
     {
-        $uploadDir = ltrim($config['upload_dir'], DIRECTORY_SEPARATOR);
-
-        $_config = [
-            'upload_absolute' => $container->getParameter('kernel.root_dir') . '/../web/' . $uploadDir ,
-            'upload_relative' => $uploadDir,
-        ];
-
-        $container->setParameter('nfq_cmspage.config', $_config);
         $container->setParameter('nfq_cmspage.types', $config['types']);
 
         $places = isset($config['places']) ? (array)$config['places'] : [];

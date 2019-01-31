@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -11,11 +11,10 @@
 
 namespace Nfq\CmsPageBundle\Service\Admin;
 
-use Doctrine\Common\Persistence\ObjectRepository;
-use Nfq\CmsPageBundle\CmsPageEvents;
-use Nfq\CmsPageBundle\Entity\CmsPage;
-use Nfq\CmsPageBundle\Entity\CmsPageRepository;
 use Nfq\AdminBundle\Service\Admin\AbstractAdminManager;
+use Nfq\CmsPageBundle\Entity\CmsPage;
+use Nfq\CmsPageBundle\Event\CmsPageEvents;
+use Nfq\CmsPageBundle\Repository\CmsPageRepository;
 
 /**
  * Class CmsManager
@@ -23,68 +22,37 @@ use Nfq\AdminBundle\Service\Admin\AbstractAdminManager;
  */
 class CmsManager extends AbstractAdminManager
 {
-    /**
-     * @var CmsPageRepository
-     */
-    private $repository;
-
-    /**
-     * @param CmsPageRepository|ObjectRepository $repository
-     */
-    public function __construct(ObjectRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
-    /**
-     * @param $entity
-     * @param string $beforeEventName
-     * @param string $afterEventName
-     * @return mixed
-     */
     public function delete(
         $entity,
-        $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_DELETE,
-        $afterEventName = CmsPageEvents::CMSPAGE_AFTER_DELETE
-    ) {
-        return parent::delete($entity, $beforeEventName, $afterEventName);
+        string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_DELETE,
+        string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_DELETE
+    ): void {
+        parent::delete($entity, $beforeEventName, $afterEventName);
     }
 
-    /**
-     * @param $entity
-     * @param string $beforeEventName
-     * @param string $afterEventName
-     * @return mixed
-     */
     public function insert(
         $entity,
-        $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_INSERT,
-        $afterEventName = CmsPageEvents::CMSPAGE_AFTER_INSERT
+        string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_INSERT,
+        string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_INSERT
     ) {
         return parent::insert($entity, $beforeEventName, $afterEventName);
     }
 
-    /**
-     * @param $entity
-     * @param string $beforeEventName
-     * @param string $afterEventName
-     * @return mixed
-     */
     public function save(
         $entity,
-        $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_SAVE,
-        $afterEventName = CmsPageEvents::CMSPAGE_AFTER_SAVE
+        string $beforeEventName = CmsPageEvents::CMSPAGE_BEFORE_SAVE,
+        string $afterEventName = CmsPageEvents::CMSPAGE_AFTER_SAVE
     ) {
         return parent::save($entity, $beforeEventName, $afterEventName);
     }
 
-    /**
-     * @param int $id
-     * @param string $locale
-     * @return CmsPage
-     */
-    public function getEditableEntity($id, $locale)
+    public function getEntity($id, ?string $locale = null): ?CmsPage
     {
-        return $this->repository->getEditableEntity($id, $locale);
+        return $this->getRepository()->getEditableEntity($id, $locale);
+    }
+
+    public function getRepository(): CmsPageRepository
+    {
+        return $this->entityManager->getRepository(CmsPage::class);
     }
 }

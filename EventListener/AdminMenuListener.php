@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -21,10 +21,15 @@ use Nfq\AdminBundle\Menu\AdminMenuListener as AdminMenuListenerBase;
  */
 class AdminMenuListener extends AdminMenuListenerBase
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function doMenuConfigure(ConfigureMenuEvent $event)
+    private const CMS_ROUTES = [
+        'nfq_cmspage_list',
+        'nfq_cmspage_new',
+        'nfq_cmspage_create',
+        'nfq_cmspage_update',
+        'nfq_cmspage_delete',
+    ];
+
+    protected function doMenuConfigure(ConfigureMenuEvent $event): void
     {
         $menu = $event->getMenu();
         $node = $this->getCmsPageNode();
@@ -32,17 +37,18 @@ class AdminMenuListener extends AdminMenuListenerBase
         $menu->addChild($node);
     }
 
-    /**
-     * @return ItemInterface
-     */
-    private function getCmsPageNode()
+    private function getCmsPageNode(): ItemInterface
     {
         return $this
             ->getFactory()
-            ->createItem('admin.side_menu.cms_pages', ['route' => 'nfq_cmspage_list'])
+            ->createItem('admin.side_menu.cms_pages', ['route' => self::CMS_ROUTES[0]])
+            ->setLabelAttributes([
+                'icon' => 'fa fa-newspaper',
+            ])
             ->setExtras(
                 [
                     'translation_domain' => 'adminInterface',
+                    'routes' => self::CMS_ROUTES
                 ]
             );
     }

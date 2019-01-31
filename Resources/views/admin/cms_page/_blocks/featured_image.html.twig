@@ -1,0 +1,18 @@
+{% trans_default_domain 'adminInterface' %}
+
+{% if form.imageFile is defined %}
+    {{ form_widget(form.imageFile) }}
+
+    <br/>
+
+    <div class="row">
+        <div class="col-sm-12">
+            {{ form_widget(form.imageAltText, {
+                'attr': {
+                    'class': 'countable',
+                    'data-maxlength': '255',
+                }
+            }) }}
+        </div>
+    </div>
+{% endif %}

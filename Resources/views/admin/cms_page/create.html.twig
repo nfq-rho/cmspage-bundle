@@ -1,0 +1,26 @@
+{% trans_default_domain 'adminInterface' %}
+{% set width = '80%' %}
+{% set cmsType = ('admin.cms.labels.adapter_' ~ app.request.query.get('_type'))|trans %}
+{% extends app.request.query.get('isModal')|default(false) ? '@NfqAdmin/modal.html.twig' : '@NfqAdmin/base/index.html.twig' %}
+
+{% block page_title %}
+    {{ 'admin.cms.cmspage_new'|trans({'%cms_type%': cmsType}) }}
+{% endblock %}
+
+{% block page_subtitle %}{% endblock %}
+
+{% block page_box_header %}
+    {{ 'admin.cms.cmspage_new'|trans({'%cms_type%': cmsType}) }}
+{% endblock %}
+
+{% block page_box_body %}
+    {% embed '@NfqAdmin/layout/form-translatable.html.twig' %}
+        {% block locale_form %}
+            {% embed '@NfqCmsPage/admin/cms_page/_form.htm.twig' %}{% endembed %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block extra_js %}
+    {{ tinymce_init() }}
+{% endblock %}

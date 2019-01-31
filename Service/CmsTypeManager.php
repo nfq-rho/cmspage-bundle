@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -20,38 +20,28 @@ use Symfony\Component\HttpFoundation\Request;
  * Class CmsTypeManager
  * @package Nfq\CmsPageBundle\Service
  */
-class CmsTypeManager
+class CmsTypeManager implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $defaultType = 'cms';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $defaultAdapterNs = 'Nfq\\CmsPageBundle\\Service\\Adapters\\%sAdapter';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $adapters = [];
 
     /**
      * @param array $configuredTypes
      */
-    public function setConfig(array $configuredTypes)
+    public function setConfig(array $configuredTypes): void
     {
         $this->resolveConfig($configuredTypes);
     }
 
-    /**
-     * @param Request $request
-     * @return CmsPageAdapterInterface
-     */
-    public function getAdapterFromRequest(Request $request)
+    public function getAdapterFromRequest(Request $request): CmsPageAdapterInterface
     {
         $type = $request->get('_type', $this->defaultType);
         $type = isset($this->adapters[$type]) ? $type : $this->defaultType;
@@ -59,39 +49,28 @@ class CmsTypeManager
         return $this->adapters[$type];
     }
 
-    /**
-     * @return array
-     */
-    public function getTypes()
+    public function getTypes(): array
     {
         return array_combine(
             array_keys($this->adapters),
-            array_map(function($item) {return 'cmspage.labels.adapter_' . $item; }, array_keys($this->adapters)));
+            array_map(function ($item) {
+                return 'admin.cms.labels.adapter_' . $item;
+            },
+            array_keys($this->adapters))
+        );
     }
 
-    /**
-     * @return string
-     */
-    private function getDefaultAdapterClass()
+    private function getDefaultAdapterClass(): string
     {
         return sprintf($this->defaultAdapterNs, $this->defaultType);
     }
 
-    /**
-     * @param string $name
-     * @return string
-     */
-    private function getCustomAdapterClass($name)
+    private function getCustomAdapterClass(string $name): string
     {
         return sprintf($this->defaultAdapterNs, ucfirst($name));
     }
 
-    /***
-     * @param string $name
-     * @param array $options
-     * @return string
-     */
-    private function resolveAdapterClass($name, array &$options)
+    private function resolveAdapterClass(string $name, array &$options): string
     {
         if (isset($options['class'])) {
             $class = $options['class'];
@@ -108,16 +87,12 @@ class CmsTypeManager
         return $class;
     }
 
-    /**
-     * @param array $configuredTypes
-     */
-    private function resolveConfig(array $configuredTypes)
+    private function resolveConfig(array $configuredTypes): void
     {
-        foreach($configuredTypes as $name => $options) {
-
+        foreach ($configuredTypes as $name => $options) {
             $class = $this->resolveAdapterClass($name, $options);
 
-            /** @var CmsPageAdapterInterface $adapter */
+            /** @var ContainerAwareInterface $adapter */
             $adapter = new $class($options);
 
             if (isset($options['container_aware']) && $options['container_aware'] === true) {

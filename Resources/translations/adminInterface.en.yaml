@@ -1,0 +1,41 @@
+admin:
+    side_menu:
+        cms_pages: CMS Pages
+
+    cms:
+        cmspage_new: New %cms_type%
+        cmspage_code:  Code
+        cmspage_edit_title: '#%id% - %identifier% - Edit %cms_type%'
+        cmspage_remove: '#%id% - %identifier% - Confirm removal?'
+        cmspage_remove_text: Do you want to delete this CMS page?
+        cmspage_nopages: No CMS pages are created yet
+        cmspage_head_title: CMS pages
+        cmspage_head_subtitle: Manage CMS pages & dynamic block content
+        cmspage_name: Name
+        cmspage_identifier: Identifier
+        cmspage_slug: Slug
+        cmspage_simple_text: Body text
+        cmspage_back: Back to list
+
+        head_total: Total CMS pages found
+
+        labels:
+            adapter_html: HTML text
+            adapter_cms: CMS page
+            isActive: Active
+            contentType: Type
+            identifier: Identifier
+            title: Title
+            text: Text
+            slug: URL slug
+            image:
+                alt_text: Image alt text
+
+        search_placeholder: Search...
+        search_place_placeholder: Page type
+
+        image:
+            preview_notice: Picture is not chosen yet
+
+        main_information: Main information
+        place_settings: Place settings

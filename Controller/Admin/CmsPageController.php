@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-/**                                                                       ````
+/**
  * This file is part of the "NFQ Bundles" package.
  *
  * (c) NFQ Technologies UAB <info@nfq.com>
@@ -11,142 +11,140 @@
 
 namespace Nfq\CmsPageBundle\Controller\Admin;
 
+use Nfq\AdminBundle\Controller\Traits\ListControllerTrait;
+use Nfq\AdminBundle\Controller\Traits\TranslatableCrudControllerTrait;
 use Nfq\AdminBundle\PlaceManager\PlaceManagerInterface;
 use Nfq\AdminBundle\Service\FormManager;
-use Nfq\AdminBundle\Controller\Traits\CrudIndexController;
-use Nfq\AdminBundle\Controller\Traits\TranslatableCRUDController;
 use Nfq\CmsPageBundle\Entity\CmsPage;
-use Nfq\CmsPageBundle\Service\CmsTypeManager;
-use Nfq\CmsPageBundle\Service\Admin\CmsManager;
 use Nfq\CmsPageBundle\Service\Adapters\CmsPageAdapterInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Nfq\CmsPageBundle\Service\Admin\CmsManager;
+use Nfq\CmsPageBundle\Service\Admin\CmsSearch;
+use Nfq\CmsPageBundle\Service\CmsManager as CmsManagerFront;
+use Nfq\CmsPageBundle\Service\CmsTypeManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class CmsPageController
  * @package Nfq\CmsPageBundle\Controller\Admin
  */
-class CmsPageController extends Controller
+class CmsPageController extends AbstractController
 {
-    use TranslatableCRUDController {
+    use TranslatableCrudControllerTrait {
         newAction as traitNewAction;
         createAction as traitCreateAction;
         updateAction as traitUpdateAction;
     }
-    use CrudIndexController {
+    use ListControllerTrait {
         indexAction as traitIndexAction;
     }
 
-    /**
-     * @var CmsPageAdapterInterface
-     */
+    /** @var CmsPageAdapterInterface */
     private $adapter;
 
+    /** @var CmsManager */
+    private $manager;
+
+    /** @var CmsSearch */
+    private $search;
+
+    /** @var CmsManagerFront */
+    private $frontManager;
+
+    /** @var CmsTypeManager */
+    private $typeManager;
+
+    /** @var PlaceManagerInterface */
+    private $placeManager;
+
+    public function __construct(
+        CmsManager $manager,
+        CmsSearch $search,
+        CmsManagerFront $frontManager,
+        CmsTypeManager $typeManager,
+        PlaceManagerInterface $placeManager
+    ) {
+        $this->manager = $manager;
+        $this->search = $search;
+        $this->frontManager = $frontManager;
+        $this->typeManager = $typeManager;
+        $this->placeManager = $placeManager;
+    }
+
     /**
-     * Lists all entities.
-     *
      * @Template()
-     * @param Request $request
-     * @return array
      */
     public function indexAction(Request $request)
     {
         $response = $this->traitIndexAction($request);
 
         return $response + [
-            'contentTypes' => $this->getTypeManager()->getTypes()
-        ];
+                'contentTypes' => $this->getTypeManager()->getTypes()
+            ];
     }
 
-    /**
-     * @return CmsTypeManager
-     */
-    private function getTypeManager()
+    private function getTypeManager(): CmsTypeManager
     {
-        return $this->get('nfq_cmspage.cms_type_manager');
+        return $this->typeManager;
     }
 
     /**
      * @Template()
-     *
-     * @param Request $request
-     * @return array
      */
-    public function newAction(Request $request)
+    public function newAction(Request $request): array
     {
         $this->setAdapter($request);
-        return $this->traitNewAction($request);
+
+        return $this->traitNewAction();
     }
 
-    /**
-     * @param Request $request
-     */
-    private function setAdapter(Request $request)
+    private function setAdapter(Request $request): void
     {
-        $this->adapter = $this->getTypeManager()->getAdapterFromRequest($request);
+        if (null === $this->adapter) {
+            $this->adapter = $this->getTypeManager()->getAdapterFromRequest($request);
+        }
     }
 
     /**
      * @Template()
      *
-     * @param Request $request
-     * @return array
+     * @return array|RedirectResponse
      */
     public function createAction(Request $request)
     {
         $this->setAdapter($request);
+
         return $this->traitCreateAction($request);
     }
 
     /**
      * @Template()
      *
-     * @param Request $request
-     * @return array
+     * @return array|RedirectResponse
      */
     public function updateAction(Request $request, $id)
     {
         $this->setAdapter($request);
+
         return $this->traitUpdateAction($request, $id);
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function getEditableEntityForLocale($id, $locale)
+    protected function getEntityForLocale($id, string $locale = null): ?CmsPage
     {
-        return $this->getAdminCmsManager()->getEditableEntity($id, $locale);
+        return $this->manager->getEntity($id, $locale);
     }
 
-    /**
-     * @return CmsManager
-     */
-    private function getAdminCmsManager()
+    protected function getIndexActionResults(Request $request)
     {
-        return $this->get('nfq_cmspage.admin.service.cms_manager');
+        return $this->search->getResults($request);
     }
 
-    /**
-     * @param Request $request
-     * @return mixed
-     */
-    protected function getIndexActionResultsArray(Request $request)
+    protected function redirectToPreview(CmsPage $entity): RedirectResponse
     {
-        return $this->getAdminCmsManager()->getResults($request);
-    }
-
-    /**
-     * @param CmsPage $entity
-     * @return RedirectResponse
-     */
-    protected function redirectToPreview($entity)
-    {
-        $params = $this->get('nfq_cmspage.cms_manager')
-            ->getCmsUrlParams($entity->getIdentifier(), $entity->getLocale());
+        $params = $this->frontManager->getCmsUrlParams($entity->getIdentifier(), $entity->getLocale());
 
         $params['_locale'] = $entity->getLocale();
 
@@ -155,42 +153,32 @@ class CmsPageController extends Controller
         return new RedirectResponse($url);
     }
 
-    /**
-     * @param Request $request
-     * @param CmsPage|null $entity
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    protected function redirectToIndex(Request $request, $entity = null)
+    protected function redirectToIndex(Request $request, CmsPage $entity = null): RedirectResponse
     {
         $redirectParams = $this->getRedirectToIndexParams($request, $entity);
 
-        $redirectUri = $this->generateUrl('nfq_cmspage_list', $redirectParams->all());
-
-        return $this->redirect($redirectUri);
+        return $this->redirect($this->generateUrl('nfq_cmspage_list', $redirectParams->all()));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getCreateFormAndEntity($locale)
+    protected function getCreateFormAndEntity(string $locale): array
     {
-        $formType = get_class($this->adapter->getFormTypeInstance());
+        $formType = \get_class($this->adapter->getFormTypeInstance());
         $entity = $this->adapter->getEntityInstance();
         $entity->setLocale($locale);
 
-        $uri = $this->generateUrl('nfq_cmspage_create', ['_type' => $this->adapter->getType()]);
+        $uri = $this->generateUrl('nfq_cmspage_create', ['_type' => $this->adapter::getType()]);
 
         $formOptions = [
             'locale' => $locale,
-            'places' => $this->getPlaceManager()->getPlaceChoices(),
+            'places' => $this->placeManager->getPlaceChoices(),
         ];
 
-        $submit = ($entity->getIsPublic())
+        $submit = $entity->isPublic()
             ? FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE | FormManager::SUBMIT_PREVIEW
             : FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE;
 
         $formBuilder = $this
-            ->getFormService()
+            ->getFormManager()
             ->getFormBuilder($uri, FormManager::CRUD_CREATE, $formType, $entity, $formOptions, $submit);
 
         $this->adapter->modifyForm($formBuilder);
@@ -198,79 +186,53 @@ class CmsPageController extends Controller
         return [$entity, $formBuilder->getForm()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEditDeleteForms($entity)
+    protected function getEditDeleteForms(CmsPage $entity): array
     {
-        $formType = get_class($this->adapter->getFormTypeInstance());
+        $formType = \get_class($this->adapter->getFormTypeInstance());
 
         $id = $entity->getId();
 
         $formOptions = [
             'locale' => $entity->getLocale(),
-            'places' => $this->getPlaceManager()->getPlaceChoices(),
+            'places' => $this->placeManager->getPlaceChoices(),
         ];
 
-        $uri = $this->generateUrl('nfq_cmspage_update', ['id' => $id, '_type' => $this->adapter->getType()]);
+        $uri = $this->generateUrl('nfq_cmspage_update', ['id' => $id, '_type' => $this->adapter::getType()]);
 
-        $submit = ($entity->getIsPublic())
+        $submit = $entity->isPublic()
             ? FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE | FormManager::SUBMIT_PREVIEW
             : FormManager::SUBMIT_STANDARD | FormManager::SUBMIT_CLOSE;
 
         $formBuilder = $this
-            ->getFormService()
+            ->getFormManager()
             ->getFormBuilder($uri, FormManager::CRUD_UPDATE, $formType, $entity, $formOptions, $submit);
 
         $this->adapter->modifyForm($formBuilder);
 
-        $deleteForm = $this->getDeleteForm($id);
+        $deleteForm = $this->getDeleteForm($entity);
 
         return [$formBuilder->getForm(), $deleteForm];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDeleteForm($id)
+    protected function getDeleteForm($entity): FormInterface
     {
-        $uri = $this->generateUrl('nfq_cmspage_delete', ['id' => $id]);
+        $uri = $this->generateUrl('nfq_cmspage_delete', ['id' => $entity->getId()]);
 
-        return $this->getFormService()->getDeleteForm($uri);
+        return $this->getFormManager()->getDeleteForm($uri);
     }
 
-    /**
-     * @param CmsPage $entity
-     */
-    protected function insertAfterCreateAction($entity)
+    protected function insertAfterCreateAction(CmsPage $entity): void
     {
-        $manager = $this->getAdminCmsManager();
-        $manager->insert($entity);
+        $this->manager->insert($entity);
     }
 
-    /**
-     * @param CmsPage $entity
-     */
-    protected function deleteAfterDeleteAction($entity)
+    protected function deleteAfterDeleteAction(CmsPage $entity): void
     {
-        $manager = $this->getAdminCmsManager();
-        $manager->delete($entity);
+        $this->manager->delete($entity);
     }
 
-    /**
-     * @param CmsPage $entity
-     */
-    protected function saveAfterUpdateAction($entity)
+    protected function saveAfterUpdateAction(CmsPage $entity): void
     {
-        $manager = $this->getAdminCmsManager();
-        $manager->save($entity);
-    }
-
-    /**
-     * @return PlaceManagerInterface
-     */
-    private function getPlaceManager()
-    {
-        return $this->get('nfq_cmspage.service.place_manager');
+        $this->manager->save($entity);
     }
 }

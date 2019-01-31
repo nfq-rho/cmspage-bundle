@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -13,104 +13,76 @@ namespace Nfq\CmsPageBundle\Service\Adapters;
 
 use Nfq\CmsPageBundle\Entity\CmsPage;
 use Nfq\CmsPageBundle\Form\CmsPageType;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class AbstractAdapter
  * @package Nfq\CmsPageBundle\Service\Adapters
  */
-abstract class AbstractAdapter implements CmsPageAdapterInterface
+abstract class AbstractAdapter implements CmsPageAdapterInterface, ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $options;
 
-    /**
-     * @var CmsPage
-     */
+    /** @var CmsPage */
     protected $entity;
 
-    /**
-     * @var CmsPageType
-     */
+    /** @var CmsPageType */
     protected $formType;
 
-    /**
-     * @param array $options
-     */
     public function __construct(array $options)
     {
         $this->options = $options;
     }
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function getIsPublic()
+    protected function isPublic(): bool
     {
         return $this->options['public'];
     }
 
-    /**
-     * @return bool
-     */
-    protected function hasFeaturedImage()
+    protected function hasFeaturedImage(): bool
     {
         return $this->options['has_featured_image'];
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     */
-    public function modifyForm(FormBuilderInterface $builder)
+    public function modifyForm(FormBuilderInterface $builder): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
 
             if (!$this->hasFeaturedImage()) {
-                $form->remove('file');
-                $form->remove('imageAlt');
+                $form
+                    ->remove('imageFile')
+                    ->remove('imageAltText');
             }
 
-            if (!$this->getIsPublic()) {
+            if (!$this->isPublic()) {
                 $form->remove('slug');
             }
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormTypeInstance()
+    public function getFormType(): CmsPageType
     {
-        is_null($this->formType) && $this->formType = $this->getFormType();
+        return new CmsPageType();
+    }
+
+    public function getFormTypeInstance(): CmsPageType
+    {
+        null === $this->formType && $this->formType = $this->getFormType();
         return $this->formType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getEntityInstance()
+    public function getEntityInstance(): CmsPage
     {
-        is_null($this->entity) && $this->entity = $this->getEntity();
+        null === $this->entity && $this->entity = $this->getEntity();
         return $this->entity;
     }
 }

@@ -1,0 +1,38 @@
+parameters:
+    nfq_cmspage.admin.default_search_fields: [ 'id', 'title', 'metaTitle', 'text', 'identifier' ]
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+        bind:
+            $defaultLocale: '%kernel.default_locale%'
+
+    Nfq\AdminBundle\PlaceManager\PlaceManagerInterface: '@Nfq\CmsPageBundle\Service\CmsPlaceManager'
+
+    Nfq\CmsPageBundle\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Event,Migrations,Tests,NfqCmsPageBundle.php}'
+
+    Nfq\CmsPageBundle\Controller\:
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']
+
+    Nfq\CmsPageBundle\Service\CmsPlaceManager:
+        public: true
+        calls:
+            - [setPlaces, ['%nfq_cmspage.places%']]
+
+    Nfq\CmsPageBundle\Service\CmsTypeManager:
+        calls:
+            - [setConfig, ['%nfq_cmspage.types%']]
+            - [setContainer, ['@service_container']]
+
+    nfq_cmspage.notice_listener:
+        class: Nfq\AdminBundle\EventListener\NoticeListener
+        tags:
+            - { name: kernel.event_listener, event: cmspage.after_save, method: onMessage, priority: -10 }
+            - { name: kernel.event_listener, event: cmspage.after_insert, method: onMessage, priority: -10 }
+            - { name: kernel.event_listener, event: cmspage.after_delete, method: onMessage, priority: -10 }

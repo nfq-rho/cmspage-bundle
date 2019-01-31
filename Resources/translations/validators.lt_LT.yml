@@ -1,3 +1,0 @@
-cmspages.errors.file_too_large: Per didelis failas. Maksimalus leidžiamas dydis yra {{ limit }} {{ suffix }}.
-cmspages.errors.wrong_mime: Netinkamas failo formatas. Leidžiami formatai yra {{ types }}.
-cmspage.errors.field_not_unique: Tokia reikšmė jau egzistuoja

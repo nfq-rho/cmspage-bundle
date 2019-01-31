@@ -1,4 +1,0 @@
-nfq_cmspage_view:
-    path: /{slug}
-    methods: [ GET ]
-    defaults: { _controller: NfqCmsPageBundle:CmsPage:view }

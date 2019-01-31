@@ -1,0 +1,8 @@
+_cms_admin:
+    resource: '@NfqCmsPageBundle/Resources/config/routing_admin.yaml'
+    prefix: /admin/cms-pages
+    options: { i18n: false }
+
+_cms_front:
+    resource: '@NfqCmsPageBundle/Resources/config/routing_front.yaml'
+    prefix: /

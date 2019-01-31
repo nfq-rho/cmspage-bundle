@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -13,35 +13,38 @@ namespace Nfq\CmsPageBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Nfq\AdminBundle\Entity\ImageUpload\Image;
+use Nfq\AdminBundle\PlaceManager\Validator\Constraints as NfqPlaceAssert;
+use Nfq\AdminBundle\Translatable\Entity\TranslatableTrait;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
-use Nfq\AdminBundle\PlaceManager\Validator\Constraints as NfqPlaceAssert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
- * CmsPage
- *
- * @ORM\Table(name="cmspage", indexes={
- *      @ORM\Index(name="type_idx", columns={"content_type"})
- * })
- * @ORM\Entity(repositoryClass="Nfq\CmsPageBundle\Entity\CmsPageRepository")
- * @UniqueEntity(fields={"slug"}, message="cmspage.errors.field_not_unique")
- * @UniqueEntity(fields={"identifier"}, message="cmspage.errors.field_not_unique")
  * @Gedmo\TranslationEntity(class="Nfq\CmsPageBundle\Entity\CmsPageTranslation")
+ * @ORM\Entity(repositoryClass="Nfq\CmsPageBundle\Repository\CmsPageRepository")
+ * @ORM\Table(
+ *     indexes={
+ *         @ORM\Index(name="type_idx", columns={"content_type"}),
+ *         @ORM\Index(name="sort_position_idx", columns={"sort_position"}),
+ *     }
+ * )
+ * @UniqueEntity(fields={"slug"}, message="admin.cmspage.errors.field_not_unique")
+ * @UniqueEntity(fields={"identifier"}, message="admin.cmspage.errors.field_not_unique")
+ * @Vich\Uploadable()
  */
 class CmsPage
 {
-    /**
-     * Variable to temporarily store path to old file
-     *
-     * @var string
-     */
-    private $tempImage;
+    use TimestampableEntity;
+    use TranslatableTrait;
 
     /**
-     * @var integer
+     * @var int
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -50,475 +53,331 @@ class CmsPage
     /**
      * @var string
      *
-     * @ORM\Column(name="content_type", type="string", length=32)
+     * @ORM\Column(type="string", length=32)
      */
     protected $contentType;
 
     /**
      * @var string
      *
-     * @Gedmo\Translatable
-     * @ORM\Column(name="meta_title", type="string", length=55, nullable=true)
+     * @Gedmo\Translatable()
+     * @ORM\Column(type="string", length=55, nullable=true)
      */
     protected $metaTitle;
 
     /**
      * @var string
      *
-     * @Gedmo\Translatable
-     * @ORM\Column(name="meta_description", type="string", length=155, nullable=true)
+     * @Gedmo\Translatable()
+     * @ORM\Column(type="string", length=155, nullable=true)
      */
     protected $metaDescription;
 
     /**
-     * @var string
+     * @var bool
      *
-     * @ORM\Column(name="active", type="boolean", options={"default":0}, nullable=true)
+     * @ORM\Column(type="boolean", options={"default":0})
      */
     protected $isActive;
 
     /**
-     * @var string
+     * @var string[]
      *
-     * @Gedmo\Translatable
-     * @ORM\Column(name="place_name", type="string", nullable=true)
+     * @Gedmo\Translatable()
+     * @ORM\Column(type="json", nullable=true)
      */
-    protected $placeName;
-
-    /**
-     * @var array $places
-     * @NfqPlaceAssert\HasEmptySlots(manager="nfq_cmspage.service.place_manager")
-     * @ORM\Column(name="place", type="simple_array", nullable=true)
-     */
-    private $places;
+    protected $extra;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="public", type="boolean")
+     * @Gedmo\Translatable()
+     * @ORM\Column(type="string", nullable=true)
      */
-    private $isPublic;
+    protected $placeTitleOverwrite;
+
+    /**
+     * @var string[]
+     *
+     * @NfqPlaceAssert\HasEmptySlots(manager="Nfq\CmsPageBundle\Service\CmsPlaceManager")
+     * @ORM\Column(type="json", nullable=true)
+     */
+    protected $places;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean")
+     */
+    protected $isPublic;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="identifier", type="string", length=50, unique=true, options={"fixed":true})
+     * @ORM\Column(type="string", length=50, unique=true, options={"fixed":true})
      */
     protected $identifier;
 
     /**
      * @var string
      *
-     * @Gedmo\Translatable
-     * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     * @Gedmo\Translatable()
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    protected $name;
+    protected $title;
 
     /**
      * @var string
      *
-     * @Gedmo\Translatable
-     * @ORM\Column(name="text", type="text", nullable=true)
+     * @Gedmo\Translatable()
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $text;
 
     /**
+     * Can be nullable because there are certain types that do not have a slug
+     *
      * @var string
      *
-     * @Gedmo\Translatable
-     * @Gedmo\Slug(fields={"name"}, unique=true)
-     * @ORM\Column(name="slug", type="string", length=128, unique=true, nullable=true)
+     * @Gedmo\Translatable()
+     * @Gedmo\Slug(fields={"title"}, unique=true, updatable=false)
+     * @ORM\Column(type="string", length=128, unique=true, nullable=true)
      */
     protected $slug;
 
     /**
-     * Max file size is 5MB
-     * @Assert\Image(maxSize="5242880", maxSizeMessage="cmspages.errors.file_too_large")
-     */
-    private $file;
-
-    /**
-     * @var string
+     * @var Image
      *
-     * @Gedmo\Translatable
-     * @ORM\Column(name="image", type="string", length=255, nullable=true)
+     * @ORM\Embedded(class="Nfq\AdminBundle\Entity\ImageUpload\Image", columnPrefix="img_")
      */
     protected $image;
 
     /**
-     * @var string
-     *
-     * @Gedmo\Translatable
-     * @ORM\Column(name="image_alt", type="string", length=255, nullable=true)
+     * @var File
+     * @Assert\Image(maxSize="5242880", maxSizeMessage="admin.cmspage.errors.file_too_large")
+     * @Vich\UploadableField(
+     *     mapping="cms_image",
+     *     fileNameProperty="image.name",
+     *     mimeType="image.mimeType",
+     *     size="image.size",
+     *     dimensions="image.dimensions"
+     * )
      */
-    protected $imageAlt;
+    private $imageFile;
 
     /**
-     * @var string
-     *
-     * @Gedmo\Locale
-     * Used locale to override Translation listener`s locale
-     * this is not a mapped field of entity metadata, just a simple property
+     * @var int
+     * @ORM\Column(type="integer")
      */
-    private $locale;
+    protected $sortPosition = 0;
 
-    /**
-     * @var integer
-     * @ORM\Column(name="sort_position", type="integer")
-     */
-    private $sortPosition = 0;
+    public function __construct()
+    {
+        $this->isActive = false;
+        $this->extra = [];
+        $this->places = [];
+        $this->image = new Image();
+    }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
-     * @return string
+     * @return string[]
      */
-    public function getPlaceName()
-    {
-        return $this->placeName;
-    }
-
-    /**
-     * @param string $placeName
-     */
-    public function setPlaceName($placeName)
-    {
-        $this->placeName = $placeName;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPlaces()
+    public function getPlaces(): array
     {
         return $this->places;
     }
 
-    /**
-     * @param array $places
-     * @return $this
-     */
-    public function setPlaces($places)
+    public function setPlaces(array $places): self
     {
         $this->places = $places;
+
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getContentType()
+    public function getContentType(): string
     {
         return $this->contentType;
     }
 
-    /**
-     * @param mixed $contentType
-     */
-    public function setContentType($contentType)
+    public function setContentType(string $contentType): self
     {
         $this->contentType = $contentType;
-    }
-
-    /**
-     * Set identifier
-     *
-     * @param $identifier
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
-    }
-
-    /**
-     * Get identifier
-     *
-     * @return mixed $identifier
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * Set name
-     *
-     * @param mixed $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Get name
-     *
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Get text
-     *
-     * @return mixed
-     */
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    /**
-     * Set text
-     *
-     * @param mixed $text
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-    }
-
-    /**
-     * Set slug
-     *
-     * @param mixed $slug
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-    }
-
-    /**
-     * Get slug
-     *
-     * @return mixed
-     */
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
-    /**
-     * Get file.
-     *
-     * @return UploadedFile
-     */
-    public function getFile()
-    {
-        return $this->file;
-    }
-
-    /**
-     * Set file
-     *
-     * @param UploadedFile $file
-     * @return $this
-     */
-    public function setFile(UploadedFile $file)
-    {
-        if (isset($this->image)) {
-            $this->tempImage = $this->image;
-        }
-
-        $this->file = $file;
 
         return $this;
     }
 
-    public function resetTempFile()
+    public function setIdentifier(string $identifier): self
     {
-        $this->tempImage = null;
+        $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getIdentifier(): ?string
+    {
+        return $this->identifier;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function setText(string $text): self
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug === '' ? null : $slug;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function getPlaceTitleOverwrite(): ?string
+    {
+        return $this->placeTitleOverwrite;
+    }
+
+    public function setPlaceTitleOverwrite(?string $placeTitleOverwrite): self
+    {
+        $this->placeTitleOverwrite = $placeTitleOverwrite;
+
+        return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
     }
 
     /**
-     * @return string
+     * @param UploadedFile|File $imageFile
      */
-    public function getTempFile()
+    public function setImageFile(?File $imageFile): self
     {
-        return $this->tempImage;
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTime();
+        }
+
+        return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getImage()
+    public function getImage(): Image
     {
         return $this->image;
     }
 
-    /**
-     * @param mixed $image
-     * @return $this
-     */
-    public function setImage($image)
+    public function setImage(Image $image): self
     {
         $this->image = $image;
 
         return $this;
     }
 
-    /**
-     * Set isActive
-     *
-     * @param boolean $isActive
-     * @return $this
-     */
-    public function setIsActive($isActive)
+    public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
 
         return $this;
     }
 
-    /**
-     * Get isActive
-     *
-     * @return boolean
-     */
-    public function getIsActive()
+    public function isActive(): bool
     {
         return $this->isActive;
     }
 
-    /**
-     * Is Active
-     *
-     * @return bool
-     */
-    public function isActive()
-    {
-        return $this->getIsActive();
-    }
-
-    /**
-     * @param $locale
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
-    /**
-     * Set metaDescription
-     *
-     * @param string $metaDescription
-     *
-     * @return $this
-     */
-    public function setMetaDescription($metaDescription)
+    public function setMetaDescription(?string $metaDescription): self
     {
         $this->metaDescription = $metaDescription;
 
         return $this;
     }
 
-    /**
-     * Get metaDescription
-     *
-     * @return string
-     */
-    public function getMetaDescription()
+    public function getMetaDescription(): ?string
     {
         return $this->metaDescription;
     }
 
-    /**
-     * Set title
-     *
-     * @param string $metaTitle
-     *
-     * @return $this
-     */
-    public function setMetaTitle($metaTitle)
+    public function setMetaTitle(?string $metaTitle): self
     {
         $this->metaTitle = $metaTitle;
 
         return $this;
     }
 
-    /**
-     * Get title
-     *
-     * @return string
-     */
-    public function getMetaTitle()
+    public function getMetaTitle(): ?string
     {
         return $this->metaTitle;
     }
 
-    /**
-     * @return string
-     */
-    public function getIsPublic()
+    public function isPublic(): bool
     {
         return $this->isPublic;
     }
 
-    /**
-     * @param string $isPublic
-     *
-     * @return $this
-     */
-    public function setIsPublic($isPublic)
+    public function setIsPublic(bool $isPublic): self
     {
         $this->isPublic = $isPublic;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getImageAlt()
+    public function getSortPosition(): int
     {
-        return $this->imageAlt;
+        return $this->sortPosition;
     }
 
-    /**
-     * @param string $imageAlt
-     *
-     * @return CmsPage
-     */
-    public function setImageAlt($imageAlt)
+    public function setSortPosition(int $sortPosition): self
     {
-        $this->imageAlt = $imageAlt;
+        $this->sortPosition = $sortPosition;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string[]|null
      */
-    public function getSortPosition()
+    public function getExtra(): ?array
     {
-        return $this->sortPosition;
+        return $this->extra;
     }
 
     /**
-     * @param int $sortPosition
-     * @return CmsPage
+     * @param string[] $extra
      */
-    public function setSortPosition($sortPosition)
+    public function setExtra(array $extra): self
     {
-        $this->sortPosition = $sortPosition;
+        $this->extra = $extra;
 
         return $this;
     }

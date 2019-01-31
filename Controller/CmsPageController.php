@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the "NFQ Bundles" package.
@@ -12,32 +12,46 @@
 namespace Nfq\CmsPageBundle\Controller;
 
 use Nfq\CmsPageBundle\Entity\CmsPage;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Nfq\CmsPageBundle\Service\CmsManager;
+use Nfq\SeoBundle\Page\SeoPageInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class CmsPageController
  * @package Nfq\CmsPageBundle\Controller
  */
-class CmsPageController extends Controller
+class CmsPageController extends AbstractController
 {
-    /**
-     * @var string
-     */
-    protected $defaultTemplate = 'NfqCmsPageBundle:CmsPage:view.html.twig';
+    public const REQUEST_ATTRIBUTE_IDENTIFIER = '_cms_identifier';
 
-    /**
-     * @param Request $request
-     * @param string $slug
-     * @return Response
-     */
-    public function viewAction(Request $request, $slug)
+    /** @var string */
+    protected $defaultTemplate = '@NfqCmsPage/cms_page/view.html.twig';
+
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                'cms_manager' => CmsManager::class,
+                'nfq_seo.page' => '?' . SeoPageInterface::class,
+            ]
+        );
+    }
+
+    public function viewAction(Request $request, string $slug): Response
     {
         try {
-            $entity = $this->getCmsPageManager()->getCmsPage($slug);
+            /** @var CmsPage $entity */
+            $entity = $this->get('cms_manager')->getCmsPage($slug);
+
+            // Only public cms pages can be opened
+            if (!$entity->isPublic()) {
+                throw new \Exception('cms.page_not_found');
+            }
+
+            $request->attributes->set(self::REQUEST_ATTRIBUTE_IDENTIFIER, $entity->getIdentifier());
 
             $responseParams = [
                 'entity' => clone $entity,
@@ -46,55 +60,51 @@ class CmsPageController extends Controller
 
             $this->appendResponseParameters($request, $entity, $responseParams);
 
+            $this->setSeoDataForPage($entity);
+
             return $this->render(
                 $this->resolvePageTemplate($entity),
                 $responseParams
-                );
+            );
         } catch (\Exception $e) {
-            throw new NotFoundHttpException($e->getMessage(), $e);
+            throw $this->createNotFoundException($e->getMessage(), $e);
         }
     }
 
-    /**
-     * Returns true if this is a sub-request
-     * @return bool
-     */
-    protected function isSubRequest()
+    protected function isSubRequest(): bool
     {
         return null !== $this->get('request_stack')->getParentRequest();
     }
 
     /**
      * This method can be used in order to append more parameters to response.
-     *
-     * @param Request $request
-     * @param CmsPage $entity
-     * @param array $responseParams
      */
-    protected function appendResponseParameters(Request $request, $entity, array &$responseParams)
+    protected function appendResponseParameters(Request $request, CmsPage $entity, array &$responseParams): void
     {
     }
 
-    /**
-     * @return \Nfq\CmsPageBundle\Service\CmsManager
-     */
-    protected function getCmsPageManager()
+    protected function setSeoDataForPage(CmsPage $cmsPage): void
     {
-        return $this->get('nfq_cmspage.cms_manager');
+        if (!$this->has('nfq_seo.page')) {
+            return;
+        }
+
+        $title = $cmsPage->getMetaTitle() ?? $cmsPage->getTitle();
+
+        $this->get('nfq_seo.page')
+            ->setTitle($title)
+            ->addMeta('name', 'description', $cmsPage->getMetaDescription())
+            ->addMeta('property', 'og:title', $title)
+            ->addMeta('property', 'og:description', $cmsPage->getMetaDescription())
+            ->addMeta('property', 'og:type', 'article');
     }
 
-    /**
-     * @param CmsPage $entity
-     * @return string
-     */
-    protected function resolvePageTemplate(CmsPage $entity)
+    protected function resolvePageTemplate(CmsPage $entity): string
     {
-        $twigTemplateLoader = $this->get('twig.loader');
-
-        $customTemplate = sprintf('NfqCmsPageBundle:CmsPage/_custom:%s.html.twig', $entity->getIdentifier());
+        $customTemplate = sprintf('@NfqCmsPage/cms_page/_custom:%s.html.twig', $entity->getIdentifier());
         $finalTemplate = $this->defaultTemplate;
 
-        if ($twigTemplateLoader->exists($customTemplate)) {
+        if ($this->get('templating')->exists($customTemplate)) {
             $finalTemplate = $customTemplate;
         }
 

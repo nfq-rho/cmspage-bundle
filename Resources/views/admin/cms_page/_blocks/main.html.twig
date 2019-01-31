@@ -1,0 +1,61 @@
+{{ form_row(form.isActive) }}
+
+{% if form.identifier is defined %}
+    {{ form_row(form.identifier) }}
+{% endif %}
+
+{% if form.title is defined %}
+    {{ form_row(form.title) }}
+{% endif %}
+
+{% if form.slug is defined %}
+    {{ form_row(form.slug) }}
+{% endif %}
+
+{% if form.metaTitle is defined %}
+    <div class="form-group">
+        {{ form_label(form.metaTitle) }}
+        <div class="col-sm-10">
+            {{ form_widget(form.metaTitle, {
+                'attr': {
+                    'class': 'countable',
+                    'data-maxlength': '55',
+                }
+            }) }}
+        </div>
+    </div>
+{% endif %}
+
+{% if form.metaDescription is defined %}
+    <div class="form-group">
+        {{ form_label(form.metaDescription) }}
+        <div class="col-sm-10">
+            {{ form_widget(form.metaDescription, {
+                'attr': {
+                    'class': 'countable',
+                    'data-maxlength': '155',
+                }
+            }) }}
+        </div>
+    </div>
+{% endif %}
+
+{% if form.sortPosition is defined %}
+    <div class="form-group">
+        {{ form_label(form.sortPosition) }}
+        <div class="row col-sm-10">
+            <div class="col-sm-10">
+                {{ form_widget(form.sortPosition) }}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if form.text_simple is defined %}
+    {{ form_row(form.text_simple) }}
+{% endif %}
+
+{% if form.extra is defined and form.extra.children|length > 0 %}
+    <hr/>
+    {{ form_widget(form.extra) }}
+{% endif %}

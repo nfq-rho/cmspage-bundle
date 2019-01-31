@@ -1,0 +1,4 @@
+meta.template.cmspage.page_title: '%title% - %site_name%'
+meta.template.cmspage.page_description: '%description% - %site_name%'
+
+cms.page_not_found: The page You are looking for is missing or does not exist. Consider using different address.
