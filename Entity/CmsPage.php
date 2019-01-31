@@ -155,7 +155,13 @@ class CmsPage
     /**
      * @var File
      * @Assert\Image(maxSize="5242880", maxSizeMessage="admin.cmspage.errors.file_too_large")
-     * @Vich\UploadableField(mapping="cms_image", fileNameProperty="image.name", mimeType="image.mimeType", size="image.size", dimensions="image.dimensions")
+     * @Vich\UploadableField(
+     *     mapping="cms_image",
+     *     fileNameProperty="image.name",
+     *     mimeType="image.mimeType",
+     *     size="image.size",
+     *     dimensions="image.dimensions"
+     * )
      */
     private $imageFile;
 
@@ -176,18 +182,6 @@ class CmsPage
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getPlaceTitleOverwrite(): ?string
-    {
-        return $this->placeTitleOverwrite;
-    }
-
-    public function setPlaceTitleOverwrite(string $placeTitleOverwrite): self
-    {
-        $this->placeTitleOverwrite = $placeTitleOverwrite;
-
-        return $this;
     }
 
     /**
@@ -229,7 +223,7 @@ class CmsPage
         return $this->identifier;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
@@ -253,9 +247,9 @@ class CmsPage
         return $this;
     }
 
-    public function setSlug(string $slug): self
+    public function setSlug(?string $slug): self
     {
-        $this->slug = $slug;
+        $this->slug = $slug === '' ? null : $slug;
 
         return $this;
     }
@@ -263,6 +257,18 @@ class CmsPage
     public function getSlug(): ?string
     {
         return $this->slug;
+    }
+
+    public function getPlaceTitleOverwrite(): ?string
+    {
+        return $this->placeTitleOverwrite;
+    }
+
+    public function setPlaceTitleOverwrite(?string $placeTitleOverwrite): self
+    {
+        $this->placeTitleOverwrite = $placeTitleOverwrite;
+
+        return $this;
     }
 
     public function getImageFile(): ?File
@@ -310,7 +316,7 @@ class CmsPage
         return $this->isActive;
     }
 
-    public function setMetaDescription(string $metaDescription): self
+    public function setMetaDescription(?string $metaDescription): self
     {
         $this->metaDescription = $metaDescription;
 
@@ -322,7 +328,7 @@ class CmsPage
         return $this->metaDescription;
     }
 
-    public function setMetaTitle(string $metaTitle): self
+    public function setMetaTitle(?string $metaTitle): self
     {
         $this->metaTitle = $metaTitle;
 
